@@ -32,7 +32,7 @@ export function Layout() {
           </div>
 
           <a
-            href="https://github.com"
+            href="https://github.com/mohammedhamza123/data-Structure"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:border-brand-500/50 hover:text-white"
