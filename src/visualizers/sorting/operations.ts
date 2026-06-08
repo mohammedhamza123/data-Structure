@@ -3,12 +3,15 @@ import type { TFunction } from "../../i18n";
 
 export type SortItem = { id: string; value: number };
 
+export type Pointer = { label: string; index: number };
+
 export type SortFrame = {
   order: SortItem[];
   comparing: number[];
   swapping: number[];
   sorted: number[];
   pivot: number | null;
+  pointers: Pointer[];
   codeLine: number;
   message: string;
 };
@@ -42,13 +45,14 @@ class Recorder {
     this.items = items.map((i) => ({ ...i }));
   }
 
-  snap(opts: { comparing?: number[]; swapping?: number[]; pivot?: number | null; codeLine: number; message: string }) {
+  snap(opts: { comparing?: number[]; swapping?: number[]; pivot?: number | null; pointers?: Pointer[]; codeLine: number; message: string }) {
     this.frames.push({
       order: this.items.map((i) => ({ ...i })),
       comparing: opts.comparing ?? [],
       swapping: opts.swapping ?? [],
       sorted: [...this.sorted],
       pivot: opts.pivot ?? null,
+      pointers: (opts.pointers ?? []).filter((p) => p.index >= 0 && p.index < this.items.length),
       codeLine: opts.codeLine,
       message: opts.message,
     });
@@ -77,11 +81,12 @@ export function bubbleSort(t: TFunction, items: SortItem[]): SortRun {
   r.snap({ codeLine: 0, message: t("نبدأ ترتيب الفقاعات: نقارن كل عنصرين متجاورين.", "Start bubble sort: compare each pair of adjacent elements.") });
   for (let i = 0; i < n - 1; i++) {
     for (let j = 0; j < n - i - 1; j++) {
-      r.snap({ comparing: [j, j + 1], codeLine: 2, message: t(`مقارنة ${r.items[j].value} و ${r.items[j + 1].value}.`, `Compare ${r.items[j].value} and ${r.items[j + 1].value}.`) });
+      const ptr: Pointer[] = [{ label: "j", index: j }, { label: "j+1", index: j + 1 }];
+      r.snap({ comparing: [j, j + 1], pointers: ptr, codeLine: 2, message: t(`مقارنة ${r.items[j].value} و ${r.items[j + 1].value}.`, `Compare ${r.items[j].value} and ${r.items[j + 1].value}.`) });
       if (r.items[j].value > r.items[j + 1].value) {
-        r.snap({ swapping: [j, j + 1], codeLine: 3, message: t(`${r.items[j].value} > ${r.items[j + 1].value} ← نبدّلهما.`, `${r.items[j].value} > ${r.items[j + 1].value} ← swap them.`) });
+        r.snap({ swapping: [j, j + 1], pointers: ptr, codeLine: 3, message: t(`${r.items[j].value} > ${r.items[j + 1].value} ← نبدّلهما.`, `${r.items[j].value} > ${r.items[j + 1].value} ← swap them.`) });
         r.swap(j, j + 1);
-        r.snap({ swapping: [j, j + 1], codeLine: 3, message: t("تمّ التبديل.", "Swapped.") });
+        r.snap({ swapping: [j, j + 1], pointers: [{ label: "j", index: j }, { label: "j+1", index: j + 1 }], codeLine: 3, message: t("تمّ التبديل.", "Swapped.") });
       }
     }
     r.sorted.add(n - 1 - i);
@@ -105,16 +110,16 @@ export function selectionSort(t: TFunction, items: SortItem[]): SortRun {
   r.snap({ codeLine: 0, message: t("ترتيب الاختيار: نبحث عن الأصغر ونضعه في المقدمة.", "Selection sort: find the smallest element and place it at the front.") });
   for (let i = 0; i < n - 1; i++) {
     let min = i;
-    r.snap({ comparing: [min], pivot: i, codeLine: 1, message: t(`نفترض أن الأصغر عند الموضع ${i}.`, `Assume the smallest is at index ${i}.`) });
+    r.snap({ comparing: [min], pivot: i, pointers: [{ label: "i", index: i }, { label: "min", index: min }], codeLine: 1, message: t(`نفترض أن الأصغر عند الموضع ${i}.`, `Assume the smallest is at index ${i}.`) });
     for (let j = i + 1; j < n; j++) {
-      r.snap({ comparing: [min, j], pivot: i, codeLine: 3, message: t(`هل ${r.items[j].value} < ${r.items[min].value}؟`, `Is ${r.items[j].value} < ${r.items[min].value}?`) });
+      r.snap({ comparing: [min, j], pivot: i, pointers: [{ label: "i", index: i }, { label: "min", index: min }, { label: "j", index: j }], codeLine: 3, message: t(`هل ${r.items[j].value} < ${r.items[min].value}؟`, `Is ${r.items[j].value} < ${r.items[min].value}?`) });
       if (r.items[j].value < r.items[min].value) {
         min = j;
-        r.snap({ comparing: [min], pivot: i, codeLine: 3, message: t(`أصغر جديد: ${r.items[min].value}.`, `New smallest: ${r.items[min].value}.`) });
+        r.snap({ comparing: [min], pivot: i, pointers: [{ label: "i", index: i }, { label: "min", index: min }, { label: "j", index: j }], codeLine: 3, message: t(`أصغر جديد: ${r.items[min].value}.`, `New smallest: ${r.items[min].value}.`) });
       }
     }
     if (min !== i) {
-      r.snap({ swapping: [i, min], codeLine: 4, message: t(`نبدّل العنصر ${r.items[i].value} مع الأصغر ${r.items[min].value}.`, `Swap element ${r.items[i].value} with the smallest ${r.items[min].value}.`) });
+      r.snap({ swapping: [i, min], pointers: [{ label: "i", index: i }, { label: "min", index: min }], codeLine: 4, message: t(`نبدّل العنصر ${r.items[i].value} مع الأصغر ${r.items[min].value}.`, `Swap element ${r.items[i].value} with the smallest ${r.items[min].value}.`) });
       r.swap(i, min);
     }
     r.sorted.add(i);
@@ -138,11 +143,11 @@ export function insertionSort(t: TFunction, items: SortItem[]): SortRun {
   r.snap({ codeLine: 0, message: t("ترتيب الإدراج: نبني جزءاً مرتّباً عنصراً عنصراً.", "Insertion sort: build a sorted portion one element at a time.") });
   for (let i = 1; i < n; i++) {
     let j = i;
-    r.snap({ comparing: [i], codeLine: 1, message: t(`نُدرج العنصر ${r.items[i].value} في الجزء المرتّب.`, `Insert element ${r.items[i].value} into the sorted portion.`) });
+    r.snap({ comparing: [i], pointers: [{ label: "i", index: i }, { label: "j", index: j }], codeLine: 1, message: t(`نُدرج العنصر ${r.items[i].value} في الجزء المرتّب.`, `Insert element ${r.items[i].value} into the sorted portion.`) });
     while (j > 0 && r.items[j - 1].value > r.items[j].value) {
-      r.snap({ comparing: [j - 1, j], codeLine: 2, message: t(`${r.items[j - 1].value} > ${r.items[j].value} ← نزيحه لليمين.`, `${r.items[j - 1].value} > ${r.items[j].value} ← shift it right.`) });
+      r.snap({ comparing: [j - 1, j], pointers: [{ label: "i", index: i }, { label: "j-1", index: j - 1 }, { label: "j", index: j }], codeLine: 2, message: t(`${r.items[j - 1].value} > ${r.items[j].value} ← نزيحه لليمين.`, `${r.items[j - 1].value} > ${r.items[j].value} ← shift it right.`) });
       r.swap(j - 1, j);
-      r.snap({ swapping: [j - 1, j], codeLine: 3, message: t("إزاحة.", "Shift.") });
+      r.snap({ swapping: [j - 1, j], pointers: [{ label: "i", index: i }, { label: "j", index: j - 1 }], codeLine: 3, message: t("إزاحة.", "Shift.") });
       j--;
     }
     r.sorted.add(i);
@@ -174,20 +179,22 @@ export function quickSort(t: TFunction, items: SortItem[]): SortRun {
       return;
     }
     const pivotIdx = hi;
-    r.snap({ pivot: pivotIdx, codeLine: 1, message: t(`المحور = ${r.items[pivotIdx].value} (آخر عنصر في المجال).`, `Pivot = ${r.items[pivotIdx].value} (last element in the range).`) });
+    const bounds: Pointer[] = [{ label: "lo", index: lo }, { label: "hi", index: hi }, { label: "pivot", index: pivotIdx }];
+    r.snap({ pivot: pivotIdx, pointers: bounds, codeLine: 1, message: t(`المحور = ${r.items[pivotIdx].value} (آخر عنصر في المجال).`, `Pivot = ${r.items[pivotIdx].value} (last element in the range).`) });
     let i = lo - 1;
     for (let j = lo; j < hi; j++) {
-      r.snap({ comparing: [j], pivot: pivotIdx, codeLine: 2, message: t(`هل ${r.items[j].value} < المحور ${r.items[pivotIdx].value}؟`, `Is ${r.items[j].value} < pivot ${r.items[pivotIdx].value}?`) });
+      const ip: Pointer[] = [...bounds, { label: "i", index: i }, { label: "j", index: j }];
+      r.snap({ comparing: [j], pivot: pivotIdx, pointers: ip, codeLine: 2, message: t(`هل ${r.items[j].value} < المحور ${r.items[pivotIdx].value}؟`, `Is ${r.items[j].value} < pivot ${r.items[pivotIdx].value}?`) });
       if (r.items[j].value < r.items[pivotIdx].value) {
         i++;
         if (i !== j) {
-          r.snap({ swapping: [i, j], pivot: pivotIdx, codeLine: 3, message: t(`نعم ← نبدّل ${r.items[i].value} و ${r.items[j].value}.`, `Yes ← swap ${r.items[i].value} and ${r.items[j].value}.`) });
+          r.snap({ swapping: [i, j], pivot: pivotIdx, pointers: [...bounds, { label: "i", index: i }, { label: "j", index: j }], codeLine: 3, message: t(`نعم ← نبدّل ${r.items[i].value} و ${r.items[j].value}.`, `Yes ← swap ${r.items[i].value} and ${r.items[j].value}.`) });
           r.swap(i, j);
-          r.snap({ swapping: [i, j], pivot: pivotIdx, codeLine: 3, message: t("تمّ التبديل.", "Swapped.") });
+          r.snap({ swapping: [i, j], pivot: pivotIdx, pointers: [...bounds, { label: "i", index: i }, { label: "j", index: j }], codeLine: 3, message: t("تمّ التبديل.", "Swapped.") });
         }
       }
     }
-    r.snap({ swapping: [i + 1, hi], pivot: pivotIdx, codeLine: 4, message: t(`نضع المحور في موضعه النهائي ${i + 1}.`, `Place the pivot in its final position ${i + 1}.`) });
+    r.snap({ swapping: [i + 1, hi], pivot: pivotIdx, pointers: [...bounds, { label: "i", index: i }], codeLine: 4, message: t(`نضع المحور في موضعه النهائي ${i + 1}.`, `Place the pivot in its final position ${i + 1}.`) });
     r.swap(i + 1, hi);
     r.sorted.add(i + 1);
     r.snap({ codeLine: 4, message: t(`المحور ${r.items[i + 1].value} استقر. كل ما يساره أصغر وما يمينه أكبر.`, `The pivot ${r.items[i + 1].value} settled. Everything to its left is smaller and to its right is larger.`) });
@@ -219,7 +226,7 @@ export function mergeSort(t: TFunction, items: SortItem[]): SortRun {
     let i = 0;
     let j = 0;
     while (i < left.length && j < right.length) {
-      r.snap({ comparing: [lo + i, mid + 1 + j], codeLine: 3, message: t(`ندمج: نقارن ${left[i].value} و ${right[j].value}.`, `Merging: compare ${left[i].value} and ${right[j].value}.`) });
+      r.snap({ comparing: [lo + i, mid + 1 + j], pointers: [{ label: "i", index: lo + i }, { label: "j", index: mid + 1 + j }], codeLine: 3, message: t(`ندمج: نقارن ${left[i].value} و ${right[j].value}.`, `Merging: compare ${left[i].value} and ${right[j].value}.`) });
       if (left[i].value <= right[j].value) merged.push(left[i++]);
       else merged.push(right[j++]);
     }
@@ -233,7 +240,7 @@ export function mergeSort(t: TFunction, items: SortItem[]): SortRun {
   const ms = (lo: number, hi: number) => {
     if (lo >= hi) return;
     const mid = Math.floor((lo + hi) / 2);
-    r.snap({ comparing: Array.from({ length: hi - lo + 1 }, (_, k) => lo + k), codeLine: 1, message: t(`نقسّم المجال [${lo}..${hi}] عند ${mid}.`, `Split the range [${lo}..${hi}] at ${mid}.`) });
+    r.snap({ comparing: Array.from({ length: hi - lo + 1 }, (_, k) => lo + k), pointers: [{ label: "lo", index: lo }, { label: "mid", index: mid }, { label: "hi", index: hi }], codeLine: 1, message: t(`نقسّم المجال [${lo}..${hi}] عند ${mid}.`, `Split the range [${lo}..${hi}] at ${mid}.`) });
     ms(lo, mid);
     ms(mid + 1, hi);
     merge(lo, mid, hi);

@@ -19,6 +19,19 @@ function barColor(i: number, frame: { comparing: number[]; swapping: number[]; s
   return { bg: "#6366f1", glow: "rgba(99,102,241,0.35)" };
 }
 
+const POINTER_COLORS: Record<string, string> = {
+  i: "#22d3ee",
+  j: "#f59e0b",
+  "j+1": "#fb923c",
+  "j-1": "#fbbf24",
+  min: "#f472b6",
+  pivot: "#a78bfa",
+  lo: "#38bdf8",
+  hi: "#fb7185",
+  mid: "#c084fc",
+};
+const pointerColor = (label: string) => POINTER_COLORS[label] ?? "#94a3b8";
+
 export function SortingVisualizer() {
   const { t } = useLang();
   const [algo, setAlgo] = useState<SortKey>("bubble");
@@ -118,6 +131,44 @@ export function SortingVisualizer() {
                     transition={{ type: "spring", stiffness: 260, damping: 26 }}
                   />
                 </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Index labels + moving pointers (aligned to the bar slots) */}
+          <div className="relative mt-2 flex items-start justify-center gap-2 sm:gap-3">
+            {frame.order.map((_, i) => {
+              const here = frame.pointers.filter((p) => p.index === i);
+              return (
+                <div key={i} className="flex flex-1 flex-col items-center" style={{ maxWidth: 56 }}>
+                  <span className="font-mono text-[10px] text-slate-500">{i}</span>
+                  <div className="mt-1 flex min-h-[40px] flex-col items-center gap-1">
+                    {here.map((p) => {
+                      const col = pointerColor(p.label);
+                      return (
+                        <motion.div
+                          key={p.label}
+                          layoutId={`ptr-${p.label}`}
+                          layout
+                          initial={{ opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ type: "spring", stiffness: 520, damping: 34 }}
+                          className="flex flex-col items-center"
+                        >
+                          <svg className="h-2.5 w-2.5" viewBox="0 0 12 8" fill={col}>
+                            <path d="M6 0l6 8H0z" />
+                          </svg>
+                          <span
+                            className="rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold leading-none"
+                            style={{ color: col, backgroundColor: `${col}22`, border: `1px solid ${col}66` }}
+                          >
+                            {p.label}
+                          </span>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -235,6 +286,24 @@ export function SortingVisualizer() {
             <Legend color="#ec4899" text={t("قيد التبديل", "Swapping")} />
             <Legend color="#a78bfa" text={t("المحور (pivot)", "Pivot")} />
             <Legend color="#34d399" text={t("في موضعه النهائي", "In final position")} />
+          </div>
+          <h4 className="mb-2 mt-4 font-bold text-white">{t("المؤشرات", "Pointers")}</h4>
+          <p className="mb-2 text-xs text-slate-500">
+            {t(
+              "الأسهم أسفل الأعمدة تمثّل مؤشرات الخوارزمية وتتحرّك بين المواضع خطوة بخطوة.",
+              "The arrows under the bars represent the algorithm's pointers and slide between positions step by step.",
+            )}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {["i", "j", "min", "pivot", "lo", "mid", "hi"].map((p) => (
+              <span
+                key={p}
+                className="rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold leading-none"
+                style={{ color: pointerColor(p), backgroundColor: `${pointerColor(p)}22`, border: `1px solid ${pointerColor(p)}66` }}
+              >
+                {p}
+              </span>
+            ))}
           </div>
         </div>
       </div>
