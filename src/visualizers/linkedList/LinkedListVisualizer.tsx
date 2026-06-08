@@ -12,6 +12,7 @@ import {
   deleteTail,
   search,
   reverse,
+  mergeSortList,
   type LLNode,
   type Operation,
 } from "./operations";
@@ -236,6 +237,7 @@ export function LinkedListVisualizer() {
             <ButtonGroup label={t("خوارزميات", "Algorithms")}>
               <button className={actionBtn} disabled={busy} onClick={() => run((n) => search(t, n, val()))}>{t("بحث", "Search")}</button>
               <button className={actionBtn} disabled={busy} onClick={() => run((n) => reverse(t, n))}>{t("عكس القائمة", "Reverse")}</button>
+              <button className={actionBtn} disabled={busy} onClick={() => run((n) => mergeSortList(t, n))}>{t("ترتيب الدمج", "Merge sort")}</button>
             </ButtonGroup>
             <ButtonGroup label={t("القائمة", "List")}>
               <button className={actionBtn} disabled={busy} onClick={randomize}>{t("عشوائي", "Random")}</button>

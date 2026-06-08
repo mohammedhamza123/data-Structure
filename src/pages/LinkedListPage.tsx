@@ -14,6 +14,7 @@ export function LinkedListPage() {
     { name: t("حذف النهاية", "Delete tail"), time: "O(n)", note: t("الوصول لما قبل الأخيرة", "Reach the node before last") },
     { name: t("البحث", "Search"), time: "O(n)", note: t("مقارنة خطية للعناصر", "Linear comparison of elements") },
     { name: t("عكس القائمة", "Reverse list"), time: "O(n)", note: t("ثلاثة مؤشرات بمرور واحد", "Three pointers in a single pass") },
+    { name: t("ترتيب الدمج", "Merge sort"), time: "O(n log n)", note: t("تقسيم بمؤشرَي slow/fast ثم دمج مرتّب", "Split with slow/fast pointers, then merge in order") },
   ];
 
   return (

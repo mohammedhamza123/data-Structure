@@ -257,6 +257,73 @@ export function search(t: TFunction, nodes: LLNode[], target: number): Operation
   return { title: t(`البحث عن ${target}`, `Search for ${target}`), time: "O(n)", space: "O(1)", code, frames, finalNodes: clone(nodes) };
 }
 
+export function mergeSortList(t: TFunction, nodes: LLNode[]): Operation {
+  const code = [
+    "mergeSort(head):",
+    "  if (head == null || head.next == null) return head",
+    "  mid = split(head)           // slow/fast pointers",
+    "  left = mergeSort(firstHalf)",
+    "  right = mergeSort(secondHalf)",
+    "  return merge(left, right)",
+  ];
+  const work = clone(nodes);
+  const frames: Frame[] = [];
+  const snap = (f: Partial<Frame> & { codeLine: number; message: string }) =>
+    frames.push(frame({ nodes: clone(work), ...f }));
+  const rangeIds = (lo: number, hi: number) => work.slice(lo, hi + 1).map((n) => n.id);
+
+  if (work.length <= 1) {
+    snap({ codeLine: 1, highlightIds: work.map((n) => n.id), message: t("القائمة فيها عنصر واحد أو فارغة ← مرتّبة أصلاً.", "The list has one element or is empty ← already sorted.") });
+    return { title: t("ترتيب الدمج", "Merge sort"), time: "O(n log n)", space: "O(log n)", code, frames, finalNodes: clone(work) };
+  }
+
+  snap({ codeLine: 0, message: t("ترتيب الدمج: نقسّم القائمة لنصفين ثم ندمجهما مرتّبين.", "Merge sort: split the list into two halves, then merge them in order.") });
+
+  const merge = (lo: number, mid: number, hi: number) => {
+    const left = work.slice(lo, mid + 1);
+    const right = work.slice(mid + 1, hi + 1);
+    const merged: LLNode[] = [];
+    let i = 0;
+    let j = 0;
+    while (i < left.length && j < right.length) {
+      snap({
+        codeLine: 5,
+        highlightIds: [left[i].id, right[j].id],
+        pointer: lo + merged.length,
+        message: t(`دمج: نقارن ${left[i].value} و ${right[j].value} ونأخذ الأصغر.`, `Merge: compare ${left[i].value} and ${right[j].value} and take the smaller.`),
+      });
+      if (left[i].value <= right[j].value) merged.push(left[i++]);
+      else merged.push(right[j++]);
+    }
+    while (i < left.length) merged.push(left[i++]);
+    while (j < right.length) merged.push(right[j++]);
+    for (let k = 0; k < merged.length; k++) work[lo + k] = merged[k];
+    snap({
+      codeLine: 5,
+      highlightIds: rangeIds(lo, hi),
+      message: t(`دُمج المجال [${lo}..${hi}] بترتيب صحيح.`, `Merged the range [${lo}..${hi}] in correct order.`),
+    });
+  };
+
+  const ms = (lo: number, hi: number) => {
+    if (lo >= hi) return;
+    const mid = Math.floor((lo + hi) / 2);
+    snap({
+      codeLine: 2,
+      highlightIds: rangeIds(lo, hi),
+      pointer: mid,
+      message: t(`نقسّم المجال [${lo}..${hi}] عند المنتصف ${mid} (مؤشرا slow/fast).`, `Split the range [${lo}..${hi}] at the middle ${mid} (slow/fast pointers).`),
+    });
+    ms(lo, mid);
+    ms(mid + 1, hi);
+    merge(lo, mid, hi);
+  };
+
+  ms(0, work.length - 1);
+  snap({ codeLine: 5, highlightIds: work.map((n) => n.id), message: t("اكتمل الترتيب! القائمة مرتّبة تصاعدياً.", "Sorting complete! The list is sorted in ascending order.") });
+  return { title: t("ترتيب الدمج", "Merge sort"), time: "O(n log n)", space: "O(log n)", code, frames, finalNodes: clone(work) };
+}
+
 export function reverse(t: TFunction, nodes: LLNode[]): Operation {
   const code = [
     "Node prev = null, curr = head",
