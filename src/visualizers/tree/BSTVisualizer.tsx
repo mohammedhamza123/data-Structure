@@ -5,6 +5,7 @@ import { PlaybackBar, PseudocodePanel, usePlayer } from "../../components/Player
 import { ComplexityBadge } from "../../components/ComplexityBadge";
 import { buildRun, node, type TNode, type TreeRun } from "./engine";
 import { bstDelete, bstInsert, bstSearch, bstTraverse } from "./bst";
+import { useLang } from "../../i18n";
 
 function plainInsert(root: TNode | null, value: number): TNode {
   if (!root) return node(value);
@@ -42,8 +43,9 @@ function idleRun(root: TNode | null, message: string): TreeRun {
 }
 
 export function BSTVisualizer() {
+  const { t } = useLang();
   const [root, setRoot] = useState<TNode | null>(() => buildFrom(initialValues));
-  const [run, setRun] = useState<TreeRun>(() => idleRun(buildFrom(initialValues), "اختر عملية لرؤية الشرح خطوة بخطوة على شجرة البحث الثنائية."));
+  const [run, setRun] = useState<TreeRun>(() => idleRun(buildFrom(initialValues), t("اختر عملية لرؤية الشرح خطوة بخطوة على شجرة البحث الثنائية.", "Choose an operation to see a step-by-step explanation on the binary search tree.")));
   const [value, setValue] = useState("45");
 
   const player = usePlayer(run.frames.length);
@@ -70,16 +72,16 @@ export function BSTVisualizer() {
     while (set.size < 8) set.add(Math.floor(Math.random() * 95) + 5);
     const r = buildFrom([...set]);
     setRoot(r);
-    setRun(idleRun(r, "شجرة عشوائية جديدة. جرّب العمليات."));
+    setRun(idleRun(r, t("شجرة عشوائية جديدة. جرّب العمليات.", "A new random tree. Try the operations.")));
   };
   const reset = () => {
     const r = buildFrom(initialValues);
     setRoot(r);
-    setRun(idleRun(r, "أُعيدت الشجرة الافتراضية."));
+    setRun(idleRun(r, t("أُعيدت الشجرة الافتراضية.", "The default tree was restored.")));
   };
   const clear = () => {
     setRoot(null);
-    setRun(idleRun(null, "الشجرة فارغة. أدرج قيمة للبدء."));
+    setRun(idleRun(null, t("الشجرة فارغة. أدرج قيمة للبدء.", "The tree is empty. Insert a value to start.")));
   };
 
   const busy = playing;
@@ -94,7 +96,7 @@ export function BSTVisualizer() {
         {/* visit output */}
         {run.showVisit && (
           <div className="rounded-2xl border border-border bg-surface/70 p-4">
-            <span className="text-xs font-bold text-slate-400">ناتج التنقّل:</span>
+            <span className="text-xs font-bold text-slate-400">{t("ناتج التنقّل:", "Traversal output:")}</span>
             <div dir="ltr" className="mt-2 flex flex-wrap gap-1.5">
               {frame.visit.length === 0 && <span className="text-sm text-slate-500">—</span>}
               {frame.visit.map((v, i) => (
@@ -116,9 +118,9 @@ export function BSTVisualizer() {
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm font-bold text-white">{run.name}</span>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500">زمني</span>
+              <span className="text-xs text-slate-500">{t("زمني", "Time")}</span>
               <ComplexityBadge value={run.time} size="sm" />
-              <span className="text-xs text-slate-500">مكاني</span>
+              <span className="text-xs text-slate-500">{t("مكاني", "Space")}</span>
               <ComplexityBadge value={run.space} size="sm" />
             </div>
           </div>
@@ -143,16 +145,16 @@ export function BSTVisualizer() {
         <div className="rounded-2xl border border-border bg-surface/70 p-4">
           <div className="mb-4 flex items-end gap-3">
             <label className="flex flex-col gap-1">
-              <span className="text-xs font-semibold text-slate-400">القيمة</span>
+              <span className="text-xs font-semibold text-slate-400">{t("القيمة", "Value")}</span>
               <input type="number" value={value} onChange={(e) => setValue(e.target.value)} className="w-28 rounded-lg border border-border bg-bg-soft px-3 py-2 font-mono text-sm text-white outline-none focus:border-brand-500" />
             </label>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(bstInsert(root, val()))}>إدراج</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(bstSearch(root, val()))}>بحث</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(bstDelete(root, val()))}>حذف</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(bstInsert(root, val()))}>{t("إدراج", "Insert")}</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(bstSearch(root, val()))}>{t("بحث", "Search")}</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(bstDelete(root, val()))}>{t("حذف", "Delete")}</button>
           </div>
 
           <div className="mb-3 flex flex-wrap items-center gap-2">
-            <span className="w-16 shrink-0 text-xs font-bold text-slate-500">تنقّلات</span>
+            <span className="w-16 shrink-0 text-xs font-bold text-slate-500">{t("تنقّلات", "Traversals")}</span>
             <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(root, "inorder"))}>Inorder</button>
             <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(root, "preorder"))}>Preorder</button>
             <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(root, "postorder"))}>Postorder</button>
@@ -160,10 +162,10 @@ export function BSTVisualizer() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="w-16 shrink-0 text-xs font-bold text-slate-500">الشجرة</span>
-            <button className={actionBtn} disabled={busy} onClick={randomTree}>شجرة عشوائية</button>
-            <button className={actionBtn} disabled={busy} onClick={reset}>إعادة تعيين</button>
-            <button className={actionBtn} disabled={busy} onClick={clear}>تفريغ</button>
+            <span className="w-16 shrink-0 text-xs font-bold text-slate-500">{t("الشجرة", "Tree")}</span>
+            <button className={actionBtn} disabled={busy} onClick={randomTree}>{t("شجرة عشوائية", "Random tree")}</button>
+            <button className={actionBtn} disabled={busy} onClick={reset}>{t("إعادة تعيين", "Reset")}</button>
+            <button className={actionBtn} disabled={busy} onClick={clear}>{t("تفريغ", "Clear")}</button>
           </div>
         </div>
       </div>
@@ -171,11 +173,9 @@ export function BSTVisualizer() {
       <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
         <PseudocodePanel code={run.code} activeLine={frame.codeLine} />
         <div className="rounded-2xl border border-border bg-surface/70 p-4 text-sm text-slate-400">
-          <h4 className="mb-2 font-bold text-white">خاصية BST</h4>
+          <h4 className="mb-2 font-bold text-white">{t("خاصية BST", "BST property")}</h4>
           <p className="leading-relaxed">
-            في كل عقدة: القيم في الشجرة اليسرى أصغر، واليمنى أكبر. لذلك العمليات
-            تكلّف <ComplexityBadge value="O(log n)" size="sm" /> في الشجرة المتوازنة،
-            وقد تتدهور إلى <ComplexityBadge value="O(n)" size="sm" /> إن أصبحت بشكل سلسلة.
+            {t("في كل عقدة: القيم في الشجرة اليسرى أصغر، واليمنى أكبر. لذلك العمليات تكلّف", "At each node: values in the left subtree are smaller and the right are larger. So operations cost")} <ComplexityBadge value="O(log n)" size="sm" /> {t("في الشجرة المتوازنة، وقد تتدهور إلى", "in a balanced tree, and may degrade to")} <ComplexityBadge value="O(n)" size="sm" /> {t("إن أصبحت بشكل سلسلة.", "if it becomes a chain.")}
           </p>
         </div>
       </div>

@@ -1,17 +1,21 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { navSections } from "../data/navigation";
-
-const featured = navSections.flatMap((s) => s.items).filter((i) => i.path !== "/");
-
-const stats = [
-  { value: "+15", label: "خوارزمية تفاعلية" },
-  { value: "100%", label: "خطوة بخطوة" },
-  { value: "Big-O", label: "تحليل كامل" },
-  { value: "RTL", label: "واجهة عربية" },
-];
+import { useNavSections } from "../data/navigation";
+import { useLang } from "../i18n";
 
 export function HomePage() {
+  const { t } = useLang();
+  const featured = useNavSections()
+    .flatMap((s) => s.items)
+    .filter((i) => i.path !== "/");
+
+  const stats = [
+    { value: "+15", label: t("خوارزمية تفاعلية", "Interactive algorithms") },
+    { value: "100%", label: t("خطوة بخطوة", "Step by step") },
+    { value: "Big-O", label: t("تحليل كامل", "Full analysis") },
+    { value: t("RTL", "EN/AR"), label: t("واجهة عربية", "Bilingual UI") },
+  ];
+
   return (
     <div>
       <section className="relative overflow-hidden rounded-3xl border border-border glass px-6 py-12 sm:px-12 sm:py-16">
@@ -28,7 +32,7 @@ export function HomePage() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-accent-400" />
             </span>
-            تعلّم هياكل البيانات بصرياً
+            {t("تعلّم هياكل البيانات بصرياً", "Learn data structures visually")}
           </motion.div>
 
           <motion.h1
@@ -37,9 +41,10 @@ export function HomePage() {
             transition={{ delay: 0.05 }}
             className="text-4xl font-black leading-tight tracking-tight text-white sm:text-6xl"
           >
-            افهم <span className="text-gradient">الخوارزميات</span>
+            {t("افهم ", "Understand ")}
+            <span className="text-gradient">{t("الخوارزميات", "algorithms")}</span>
             <br />
-            عبر الحركة لا الحفظ
+            {t("عبر الحركة لا الحفظ", "through motion, not memorization")}
           </motion.h1>
 
           <motion.p
@@ -48,8 +53,10 @@ export function HomePage() {
             transition={{ delay: 0.12 }}
             className="mt-5 max-w-xl text-lg leading-relaxed text-slate-300"
           >
-            منصة تفاعلية تشرح القوائم المرتبطة، خوارزميات الترتيب، والأشجار
-            خطوة بخطوة مع أنيميشن احترافي وتحليل دقيق للتعقيد الزمني والمكاني.
+            {t(
+              "منصة تفاعلية تشرح القوائم المرتبطة، خوارزميات الترتيب، والأشجار خطوة بخطوة مع أنيميشن احترافي وتحليل دقيق للتعقيد الزمني والمكاني.",
+              "An interactive platform explaining linked lists, sorting algorithms, and trees step by step with polished animations and precise time and space complexity analysis."
+            )}
           </motion.p>
 
           <motion.div
@@ -62,7 +69,7 @@ export function HomePage() {
               to="/linked-list"
               className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-brand-500 to-accent-500 px-6 py-3 font-bold text-white shadow-lg shadow-brand-600/30 transition-transform hover:scale-[1.03]"
             >
-              ابدأ بالقوائم المرتبطة
+              {t("ابدأ بالقوائم المرتبطة", "Start with linked lists")}
               <svg className="h-5 w-5 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 12H5M11 18l-6-6 6-6" />
               </svg>
@@ -71,7 +78,7 @@ export function HomePage() {
               to="/complexity"
               className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-6 py-3 font-bold text-slate-200 transition-colors hover:border-brand-500/50 hover:text-white"
             >
-              تحليل التعقيد الزمني
+              {t("تحليل التعقيد الزمني", "Time complexity analysis")}
             </Link>
           </motion.div>
         </div>
@@ -93,7 +100,7 @@ export function HomePage() {
       </section>
 
       <section className="mt-12">
-        <h2 className="mb-6 text-2xl font-extrabold text-white">استكشف الأقسام</h2>
+        <h2 className="mb-6 text-2xl font-extrabold text-white">{t("استكشف الأقسام", "Explore sections")}</h2>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {featured.map((item, i) => {
             const card = (
@@ -121,7 +128,7 @@ export function HomePage() {
                 <p className="mt-2 text-sm text-slate-400">{item.description}</p>
                 {item.available && (
                   <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-300">
-                    افتح
+                    {t("افتح", "Open")}
                     <svg className="h-4 w-4 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M19 12H5M11 18l-6-6 6-6" />
                     </svg>

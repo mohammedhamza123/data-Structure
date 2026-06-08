@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useLang } from "../i18n";
 
 export function usePlayer(total: number, baseDelay = 850) {
   const [idx, setIdx] = useState(0);
@@ -41,10 +42,11 @@ const btn =
   "rounded-xl border border-border bg-surface px-3 py-2 text-sm font-semibold text-slate-200 transition-all hover:border-brand-500/50 hover:bg-surface-2 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 active:scale-95";
 
 export function PlaybackBar({ idx, total, playing, speed, onPrev, onNext, onToggle, onSpeed }: BarProps) {
+  const { t } = useLang();
   return (
     <div className="flex flex-wrap items-center gap-3">
       <div className="flex items-center gap-1.5">
-        <button onClick={onPrev} disabled={playing || idx === 0} className={btn} aria-label="السابق">
+        <button onClick={onPrev} disabled={playing || idx === 0} className={btn} aria-label={t("السابق", "Previous")}>
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14l-9-7z" /></svg>
         </button>
         <button onClick={onToggle} className="rounded-xl bg-gradient-to-l from-brand-500 to-accent-500 px-4 py-2 text-white shadow-lg shadow-brand-600/30 transition-transform hover:scale-105">
@@ -54,7 +56,7 @@ export function PlaybackBar({ idx, total, playing, speed, onPrev, onNext, onTogg
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z" /></svg>
           )}
         </button>
-        <button onClick={onNext} disabled={playing || idx >= total - 1} className={btn} aria-label="التالي">
+        <button onClick={onNext} disabled={playing || idx >= total - 1} className={btn} aria-label={t("التالي", "Next")}>
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5l9 7-9 7z" /></svg>
         </button>
       </div>
@@ -67,7 +69,7 @@ export function PlaybackBar({ idx, total, playing, speed, onPrev, onNext, onTogg
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-xs text-slate-500">السرعة</span>
+        <span className="text-xs text-slate-500">{t("السرعة", "Speed")}</span>
         <input type="range" min={0.5} max={4} step={0.5} value={speed} onChange={(e) => onSpeed(Number(e.target.value))} className="w-20 accent-brand-500" />
         <span className="w-8 font-mono text-xs text-slate-300">{speed}x</span>
       </div>
@@ -76,10 +78,11 @@ export function PlaybackBar({ idx, total, playing, speed, onPrev, onNext, onTogg
 }
 
 export function PseudocodePanel({ code, activeLine }: { code: string[]; activeLine: number }) {
+  const { t } = useLang();
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-bg-soft">
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <span className="text-sm font-bold text-white">الكود الزائف</span>
+        <span className="text-sm font-bold text-white">{t("الكود الزائف", "Pseudocode")}</span>
         <div className="flex gap-1.5">
           <span className="h-3 w-3 rounded-full bg-danger/70" />
           <span className="h-3 w-3 rounded-full bg-warning/70" />

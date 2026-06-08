@@ -7,6 +7,7 @@ import {
   sortAlgorithms,
   type SortKey,
 } from "./operations";
+import { useLang } from "../../i18n";
 
 const algoOrder: SortKey[] = ["bubble", "selection", "insertion", "quick", "merge"];
 
@@ -19,6 +20,7 @@ function barColor(i: number, frame: { comparing: number[]; swapping: number[]; s
 }
 
 export function SortingVisualizer() {
+  const { t } = useLang();
   const [algo, setAlgo] = useState<SortKey>("bubble");
   const [values, setValues] = useState<number[]>(() => randomValues(9));
   const [frameIdx, setFrameIdx] = useState(0);
@@ -125,8 +127,8 @@ export function SortingVisualizer() {
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <span className="text-sm font-bold text-white">{run.name}</span>
             <div className="flex gap-4 text-xs">
-              <span className="text-slate-400">المقارنات: <span className="font-mono font-bold text-warning">{counters.comparisons}</span></span>
-              <span className="text-slate-400">التبديلات: <span className="font-mono font-bold text-swap">{counters.swaps}</span></span>
+              <span className="text-slate-400">{t("المقارنات:", "Comparisons:")} <span className="font-mono font-bold text-warning">{counters.comparisons}</span></span>
+              <span className="text-slate-400">{t("التبديلات:", "Swaps:")} <span className="font-mono font-bold text-swap">{counters.swaps}</span></span>
             </div>
           </div>
           <div className="min-h-[44px] rounded-xl bg-bg-soft px-4 py-3 text-sm leading-relaxed text-slate-200">
@@ -136,7 +138,7 @@ export function SortingVisualizer() {
           {/* Playback */}
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-1.5">
-              <button onClick={() => setFrameIdx((i) => Math.max(0, i - 1))} disabled={playing || frameIdx === 0} className={actionBtn} aria-label="السابق">
+              <button onClick={() => setFrameIdx((i) => Math.max(0, i - 1))} disabled={playing || frameIdx === 0} className={actionBtn} aria-label={t("السابق", "Previous")}>
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14l-9-7z" /></svg>
               </button>
               <button onClick={togglePlay} className="rounded-xl bg-gradient-to-l from-brand-500 to-accent-500 px-4 py-2 text-white shadow-lg shadow-brand-600/30 transition-transform hover:scale-105">
@@ -146,7 +148,7 @@ export function SortingVisualizer() {
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z" /></svg>
                 )}
               </button>
-              <button onClick={() => setFrameIdx((i) => Math.min(lastFrame, i + 1))} disabled={playing || frameIdx >= lastFrame} className={actionBtn} aria-label="التالي">
+              <button onClick={() => setFrameIdx((i) => Math.min(lastFrame, i + 1))} disabled={playing || frameIdx >= lastFrame} className={actionBtn} aria-label={t("التالي", "Next")}>
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5l9 7-9 7z" /></svg>
               </button>
             </div>
@@ -159,7 +161,7 @@ export function SortingVisualizer() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500">السرعة</span>
+              <span className="text-xs text-slate-500">{t("السرعة", "Speed")}</span>
               <input type="range" min={0.5} max={4} step={0.5} value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-20 accent-brand-500" />
               <span className="w-8 font-mono text-xs text-slate-300">{speed}x</span>
             </div>
@@ -170,13 +172,13 @@ export function SortingVisualizer() {
         <div className="rounded-2xl border border-border bg-surface/70 p-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-semibold text-slate-400">حجم المصفوفة</span>
+              <span className="text-xs font-semibold text-slate-400">{t("حجم المصفوفة", "Array size")}</span>
               <input type="range" min={5} max={14} value={values.length} onChange={(e) => setValues(randomValues(Number(e.target.value)))} className="w-32 accent-brand-500" />
               <span className="w-6 font-mono text-sm text-white">{values.length}</span>
             </div>
-            <button className={actionBtn} disabled={playing} onClick={() => setValues(randomValues(values.length))}>مصفوفة عشوائية</button>
-            <button className={actionBtn} disabled={playing} onClick={() => setValues([...values].sort((a, b) => b - a))}>أسوأ حالة (معكوسة)</button>
-            <button className={actionBtn} disabled={playing} onClick={() => setFrameIdx(0)}>إعادة من البداية</button>
+            <button className={actionBtn} disabled={playing} onClick={() => setValues(randomValues(values.length))}>{t("مصفوفة عشوائية", "Random array")}</button>
+            <button className={actionBtn} disabled={playing} onClick={() => setValues([...values].sort((a, b) => b - a))}>{t("أسوأ حالة (معكوسة)", "Worst case (reversed)")}</button>
+            <button className={actionBtn} disabled={playing} onClick={() => setFrameIdx(0)}>{t("إعادة من البداية", "Restart")}</button>
           </div>
         </div>
       </div>
@@ -185,7 +187,7 @@ export function SortingVisualizer() {
       <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
         <div className="overflow-hidden rounded-2xl border border-border bg-bg-soft">
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
-            <span className="text-sm font-bold text-white">الكود الزائف</span>
+            <span className="text-sm font-bold text-white">{t("الكود الزائف", "Pseudocode")}</span>
             <div className="flex gap-1.5">
               <span className="h-3 w-3 rounded-full bg-danger/70" />
               <span className="h-3 w-3 rounded-full bg-warning/70" />
@@ -210,28 +212,28 @@ export function SortingVisualizer() {
         </div>
 
         <div className="rounded-2xl border border-border bg-surface/70 p-4">
-          <h4 className="mb-3 text-sm font-bold text-white">التعقيد</h4>
+          <h4 className="mb-3 text-sm font-bold text-white">{t("التعقيد", "Complexity")}</h4>
           <div className="space-y-2.5 text-sm">
-            <Row label="الأفضل"><ComplexityBadge value={run.best} size="sm" /></Row>
-            <Row label="المتوسط"><ComplexityBadge value={run.average} size="sm" /></Row>
-            <Row label="الأسوأ"><ComplexityBadge value={run.worst} size="sm" /></Row>
-            <Row label="المساحة"><ComplexityBadge value={run.space} size="sm" /></Row>
-            <Row label="مستقرّة">
+            <Row label={t("الأفضل", "Best")}><ComplexityBadge value={run.best} size="sm" /></Row>
+            <Row label={t("المتوسط", "Average")}><ComplexityBadge value={run.average} size="sm" /></Row>
+            <Row label={t("الأسوأ", "Worst")}><ComplexityBadge value={run.worst} size="sm" /></Row>
+            <Row label={t("المساحة", "Space")}><ComplexityBadge value={run.space} size="sm" /></Row>
+            <Row label={t("مستقرّة", "Stable")}>
               <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${run.stable ? "bg-success/15 text-success" : "bg-danger/15 text-danger"}`}>
-                {run.stable ? "نعم" : "لا"}
+                {run.stable ? t("نعم", "Yes") : t("لا", "No")}
               </span>
             </Row>
           </div>
         </div>
 
         <div className="rounded-2xl border border-border bg-surface/70 p-4 text-sm text-slate-400">
-          <h4 className="mb-2 font-bold text-white">دليل الألوان</h4>
+          <h4 className="mb-2 font-bold text-white">{t("دليل الألوان", "Color guide")}</h4>
           <div className="space-y-1.5">
-            <Legend color="#6366f1" text="عنصر عادي" />
-            <Legend color="#f59e0b" text="قيد المقارنة" />
-            <Legend color="#ec4899" text="قيد التبديل" />
-            <Legend color="#a78bfa" text="المحور (pivot)" />
-            <Legend color="#34d399" text="في موضعه النهائي" />
+            <Legend color="#6366f1" text={t("عنصر عادي", "Normal element")} />
+            <Legend color="#f59e0b" text={t("قيد المقارنة", "Comparing")} />
+            <Legend color="#ec4899" text={t("قيد التبديل", "Swapping")} />
+            <Legend color="#a78bfa" text={t("المحور (pivot)", "Pivot")} />
+            <Legend color="#34d399" text={t("في موضعه النهائي", "In final position")} />
           </div>
         </div>
       </div>

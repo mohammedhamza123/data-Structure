@@ -3,16 +3,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PlaybackBar, PseudocodePanel, usePlayer } from "../../components/Player";
 import { ComplexityBadge } from "../../components/ComplexityBadge";
 import { makeStackItem, peek, pop, push, type StackItem, type StackRun } from "./stack";
+import { useLang } from "../../i18n";
 
 const initial = (): StackItem[] => [12, 27, 8].map(makeStackItem);
 
 function idleRun(items: StackItem[], message: string): StackRun {
-  return { name: "—", time: "O(1)", space: "O(1)", code: ["// اختر عملية"], frames: [{ items, active: [], entering: [], fading: [], codeLine: 0, message }], items };
+  return { name: "—", time: "O(1)", space: "O(1)", code: ["// ..."], frames: [{ items, active: [], entering: [], fading: [], codeLine: 0, message }], items };
 }
 
 export function StackVisualizer() {
+  const { t } = useLang();
   const [items, setItems] = useState<StackItem[]>(initial);
-  const [run, setRun] = useState<StackRun>(() => idleRun(initial(), "المكدس يعمل بمبدأ LIFO: آخر عنصر يدخل هو أول من يخرج. جرّب العمليات."));
+  const [run, setRun] = useState<StackRun>(() => idleRun(initial(), t("المكدس يعمل بمبدأ LIFO: آخر عنصر يدخل هو أول من يخرج. جرّب العمليات.", "A stack works on the LIFO principle: the last element in is the first out. Try the operations.")));
   const [value, setValue] = useState("42");
 
   const player = usePlayer(run.frames.length);
@@ -35,11 +37,11 @@ export function StackVisualizer() {
   const reset = () => {
     const it = initial();
     setItems(it);
-    setRun(idleRun(it, "أُعيد المكدس الافتراضي."));
+    setRun(idleRun(it, t("أُعيد المكدس الافتراضي.", "The default stack was restored.")));
   };
   const clear = () => {
     setItems([]);
-    setRun(idleRun([], "المكدس فارغ."));
+    setRun(idleRun([], t("المكدس فارغ.", "The stack is empty.")));
   };
 
   const busy = playing;
@@ -70,7 +72,7 @@ export function StackVisualizer() {
           <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />
           <div className="relative flex min-h-[280px] flex-col items-center justify-end">
             <div className="mb-3 h-5 text-xs font-bold text-accent-400">
-              {display.length > 0 && <span>← top (القمة)</span>}
+              {display.length > 0 && <span>{t("← top (القمة)", "← top")}</span>}
             </div>
             <div className="flex w-48 flex-col-reverse gap-2">
               <AnimatePresence mode="popLayout">
@@ -98,9 +100,9 @@ export function StackVisualizer() {
               </AnimatePresence>
             </div>
             <div className="mt-2 w-52 rounded-b-xl border-x-2 border-b-2 border-slate-600 pb-1 text-center text-[11px] text-slate-500">
-              قاعدة المكدس (base)
+              {t("قاعدة المكدس (base)", "Stack base")}
             </div>
-            {display.length === 0 && <p className="mt-4 text-sm text-slate-500">المكدس فارغ.</p>}
+            {display.length === 0 && <p className="mt-4 text-sm text-slate-500">{t("المكدس فارغ.", "The stack is empty.")}</p>}
           </div>
         </div>
 
@@ -109,9 +111,9 @@ export function StackVisualizer() {
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm font-bold text-white">{run.name}</span>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500">زمني</span>
+              <span className="text-xs text-slate-500">{t("زمني", "Time")}</span>
               <ComplexityBadge value={run.time} size="sm" />
-              <span className="text-xs text-slate-500">مكاني</span>
+              <span className="text-xs text-slate-500">{t("مكاني", "Space")}</span>
               <ComplexityBadge value={run.space} size="sm" />
             </div>
           </div>
@@ -125,14 +127,14 @@ export function StackVisualizer() {
         <div className="rounded-2xl border border-border bg-surface/70 p-4">
           <div className="flex flex-wrap items-end gap-3">
             <label className="flex flex-col gap-1">
-              <span className="text-xs font-semibold text-slate-400">القيمة</span>
+              <span className="text-xs font-semibold text-slate-400">{t("القيمة", "Value")}</span>
               <input type="number" value={value} onChange={(e) => setValue(e.target.value)} className="w-28 rounded-lg border border-border bg-bg-soft px-3 py-2 font-mono text-sm text-white outline-none focus:border-brand-500" />
             </label>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(push(items, val()))}>Push (إضافة)</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(pop(items))}>Pop (سحب)</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(peek(items))}>Peek (نظرة)</button>
-            <button className={actionBtn} disabled={busy} onClick={reset}>إعادة تعيين</button>
-            <button className={actionBtn} disabled={busy} onClick={clear}>تفريغ</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(push(items, val()))}>{t("Push (إضافة)", "Push")}</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(pop(items))}>{t("Pop (سحب)", "Pop")}</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(peek(items))}>{t("Peek (نظرة)", "Peek")}</button>
+            <button className={actionBtn} disabled={busy} onClick={reset}>{t("إعادة تعيين", "Reset")}</button>
+            <button className={actionBtn} disabled={busy} onClick={clear}>{t("تفريغ", "Clear")}</button>
           </div>
         </div>
       </div>
@@ -140,11 +142,10 @@ export function StackVisualizer() {
       <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
         <PseudocodePanel code={run.code} activeLine={frame.codeLine} />
         <div className="rounded-2xl border border-border bg-surface/70 p-4 text-sm text-slate-400">
-          <h4 className="mb-2 font-bold text-white">المكدس (Stack)</h4>
+          <h4 className="mb-2 font-bold text-white">{t("المكدس (Stack)", "Stack")}</h4>
           <p className="leading-relaxed">
-            بنية LIFO (Last In, First Out). كل العمليات الأساسية (push/pop/peek)
-            تتم في زمن ثابت <ComplexityBadge value="O(1)" size="sm" />. يُستخدم في
-            تتبّع الاستدعاءات (call stack)، التراجع (undo)، وتقييم التعابير.
+            {t("بنية LIFO (Last In, First Out). كل العمليات الأساسية (push/pop/peek) تتم في زمن ثابت", "A LIFO (Last In, First Out) structure. All basic operations (push/pop/peek) run in constant time")}
+            <ComplexityBadge value="O(1)" size="sm" />. {t("يُستخدم في تتبّع الاستدعاءات (call stack)، التراجع (undo)، وتقييم التعابير.", "Used in call stacks, undo, and expression evaluation.")}
           </p>
         </div>
       </div>

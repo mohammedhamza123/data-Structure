@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { PlaybackBar, PseudocodePanel, usePlayer } from "../../components/Player";
 import { ComplexityBadge } from "../../components/ComplexityBadge";
 import { dequeue, emptyQueue, enqueue, type QueueFrame, type QueueRun, type QueueState } from "./queue";
+import { useLang } from "../../i18n";
 
 const CAP = 6;
 
@@ -11,7 +12,7 @@ function idleRun(state: QueueState, message: string): QueueRun {
     name: "—",
     time: "O(1)",
     space: "O(1)",
-    code: ["// اختر عملية"],
+    code: ["// ..."],
     frames: [{ ...frameFrom(state), active: [], enter: null, exit: null, codeLine: 0, message }],
     state,
   };
@@ -29,12 +30,13 @@ function cellStyle(i: number, f: QueueFrame) {
 }
 
 export function QueueVisualizer() {
+  const { t } = useLang();
   const [mode, setMode] = useState<"linear" | "circular">("circular");
   const [state, setState] = useState<QueueState>(() => {
     const s = emptyQueue(CAP, true);
     return applyValues(s, [10, 20, 30]);
   });
-  const [run, setRun] = useState<QueueRun>(() => idleRun(applyValues(emptyQueue(CAP, true), [10, 20, 30]), "الطابور يعمل بمبدأ FIFO: أول من يدخل أول من يخرج. جرّب الإضافة والإخراج."));
+  const [run, setRun] = useState<QueueRun>(() => idleRun(applyValues(emptyQueue(CAP, true), [10, 20, 30]), t("الطابور يعمل بمبدأ FIFO: أول من يدخل أول من يخرج. جرّب الإضافة والإخراج.", "A queue works on the FIFO principle: first in, first out. Try enqueue and dequeue.")));
   const [value, setValue] = useState("40");
 
   const player = usePlayer(run.frames.length);
@@ -50,7 +52,7 @@ export function QueueVisualizer() {
     const s = applyValues(emptyQueue(CAP, m === "circular"), [10, 20, 30]);
     setMode(m);
     setState(s);
-    setRun(idleRun(s, m === "circular" ? "الطابور الدائري يعيد استخدام المساحة عبر الالتفاف (rear = (rear+1) % capacity)." : "الطابور الخطي: front و rear يتقدّمان للأمام فقط، وقد تُهدر مساحة بعد front."));
+    setRun(idleRun(s, m === "circular" ? t("الطابور الدائري يعيد استخدام المساحة عبر الالتفاف (rear = (rear+1) % capacity).", "The circular queue reuses space by wrapping around (rear = (rear+1) % capacity).") : t("الطابور الخطي: front و rear يتقدّمان للأمام فقط، وقد تُهدر مساحة بعد front.", "The linear queue: front and rear only move forward, and space after front may be wasted.")));
   };
 
   const val = () => {
@@ -59,8 +61,8 @@ export function QueueVisualizer() {
   };
   const doEnq = () => { const r = enqueue(state, val()); setState(r.state); setRun(r); };
   const doDeq = () => { const r = dequeue(state); setState(r.state); setRun(r); };
-  const reset = () => { const s = applyValues(emptyQueue(CAP, mode === "circular"), [10, 20, 30]); setState(s); setRun(idleRun(s, "أُعيد الطابور.")); };
-  const clear = () => { const s = emptyQueue(CAP, mode === "circular"); setState(s); setRun(idleRun(s, "الطابور فارغ.")); };
+  const reset = () => { const s = applyValues(emptyQueue(CAP, mode === "circular"), [10, 20, 30]); setState(s); setRun(idleRun(s, t("أُعيد الطابور.", "The queue was reset."))); };
+  const clear = () => { const s = emptyQueue(CAP, mode === "circular"); setState(s); setRun(idleRun(s, t("الطابور فارغ.", "The queue is empty."))); };
 
   const busy = playing;
   const actionBtn =
@@ -70,8 +72,8 @@ export function QueueVisualizer() {
     <div className="grid gap-6 lg:grid-cols-[1fr_330px]">
       <div className="space-y-6">
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => switchMode("circular")} className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${mode === "circular" ? "bg-gradient-to-l from-brand-500 to-accent-500 text-white shadow-lg shadow-brand-600/30" : "border border-border bg-surface text-slate-300 hover:text-white"}`}>طابور دائري</button>
-          <button onClick={() => switchMode("linear")} className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${mode === "linear" ? "bg-gradient-to-l from-brand-500 to-accent-500 text-white shadow-lg shadow-brand-600/30" : "border border-border bg-surface text-slate-300 hover:text-white"}`}>طابور خطي</button>
+          <button onClick={() => switchMode("circular")} className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${mode === "circular" ? "bg-gradient-to-l from-brand-500 to-accent-500 text-white shadow-lg shadow-brand-600/30" : "border border-border bg-surface text-slate-300 hover:text-white"}`}>{t("طابور دائري", "Circular queue")}</button>
+          <button onClick={() => switchMode("linear")} className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${mode === "linear" ? "bg-gradient-to-l from-brand-500 to-accent-500 text-white shadow-lg shadow-brand-600/30" : "border border-border bg-surface text-slate-300 hover:text-white"}`}>{t("طابور خطي", "Linear queue")}</button>
         </div>
 
         <div className="relative overflow-hidden rounded-2xl border border-border bg-bg-soft/80 p-6">
@@ -79,7 +81,7 @@ export function QueueVisualizer() {
           <div className="relative">
             {frame.circular ? <CircularLayout frame={frame} /> : <LinearLayout frame={frame} />}
             <div className="mt-4 flex justify-center gap-6 text-xs text-slate-400">
-              <span>الحجم: <span className="font-mono font-bold text-white">{frame.count}</span> / {frame.capacity}</span>
+              <span>{t("الحجم:", "Size:")} <span className="font-mono font-bold text-white">{frame.count}</span> / {frame.capacity}</span>
               <span>front = <span className="font-mono font-bold text-accent-400">{frame.count ? frame.front : "-"}</span></span>
               <span>rear = <span className="font-mono font-bold text-brand-300">{frame.count ? frame.rear : "-"}</span></span>
             </div>
@@ -90,9 +92,9 @@ export function QueueVisualizer() {
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm font-bold text-white">{run.name}</span>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500">زمني</span>
+              <span className="text-xs text-slate-500">{t("زمني", "Time")}</span>
               <ComplexityBadge value={run.time} size="sm" />
-              <span className="text-xs text-slate-500">مكاني</span>
+              <span className="text-xs text-slate-500">{t("مكاني", "Space")}</span>
               <ComplexityBadge value={run.space} size="sm" />
             </div>
           </div>
@@ -105,13 +107,13 @@ export function QueueVisualizer() {
         <div className="rounded-2xl border border-border bg-surface/70 p-4">
           <div className="flex flex-wrap items-end gap-3">
             <label className="flex flex-col gap-1">
-              <span className="text-xs font-semibold text-slate-400">القيمة</span>
+              <span className="text-xs font-semibold text-slate-400">{t("القيمة", "Value")}</span>
               <input type="number" value={value} onChange={(e) => setValue(e.target.value)} className="w-28 rounded-lg border border-border bg-bg-soft px-3 py-2 font-mono text-sm text-white outline-none focus:border-brand-500" />
             </label>
-            <button className={actionBtn} disabled={busy} onClick={doEnq}>Enqueue (إضافة)</button>
-            <button className={actionBtn} disabled={busy} onClick={doDeq}>Dequeue (إخراج)</button>
-            <button className={actionBtn} disabled={busy} onClick={reset}>إعادة تعيين</button>
-            <button className={actionBtn} disabled={busy} onClick={clear}>تفريغ</button>
+            <button className={actionBtn} disabled={busy} onClick={doEnq}>{t("Enqueue (إضافة)", "Enqueue")}</button>
+            <button className={actionBtn} disabled={busy} onClick={doDeq}>{t("Dequeue (إخراج)", "Dequeue")}</button>
+            <button className={actionBtn} disabled={busy} onClick={reset}>{t("إعادة تعيين", "Reset")}</button>
+            <button className={actionBtn} disabled={busy} onClick={clear}>{t("تفريغ", "Clear")}</button>
           </div>
         </div>
       </div>
@@ -119,13 +121,13 @@ export function QueueVisualizer() {
       <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
         <PseudocodePanel code={run.code} activeLine={frame.codeLine} />
         <div className="rounded-2xl border border-border bg-surface/70 p-4 text-sm text-slate-400">
-          <h4 className="mb-2 font-bold text-white">{frame.circular ? "الطابور الدائري" : "الطابور الخطي"}</h4>
+          <h4 className="mb-2 font-bold text-white">{frame.circular ? t("الطابور الدائري", "Circular queue") : t("الطابور الخطي", "Linear queue")}</h4>
           <p className="leading-relaxed">
             {frame.circular
-              ? "يلتفّ rear و front حول المصفوفة باستخدام باقي القسمة % capacity، فيُعاد استخدام الخلايا الفارغة بكفاءة دون إزاحة العناصر."
-              : "front و rear يتقدّمان للأمام فقط. بعد عدّة dequeue تبقى خلايا فارغة في البداية لا يُعاد استخدامها — وهذا عيب الطابور الخطي."}
+              ? t("يلتفّ rear و front حول المصفوفة باستخدام باقي القسمة % capacity، فيُعاد استخدام الخلايا الفارغة بكفاءة دون إزاحة العناصر.", "rear and front wrap around the array using modulo % capacity, so empty cells are reused efficiently without shifting elements.")
+              : t("front و rear يتقدّمان للأمام فقط. بعد عدّة dequeue تبقى خلايا فارغة في البداية لا يُعاد استخدامها — وهذا عيب الطابور الخطي.", "front and rear only move forward. After several dequeues, empty cells remain at the start and are not reused — the linear queue's drawback.")}
           </p>
-          <p className="mt-2">العمليتان enqueue و dequeue في زمن ثابت <ComplexityBadge value="O(1)" size="sm" />.</p>
+          <p className="mt-2">{t("العمليتان enqueue و dequeue في زمن ثابت", "Both enqueue and dequeue run in constant time")} <ComplexityBadge value="O(1)" size="sm" />.</p>
         </div>
       </div>
     </div>

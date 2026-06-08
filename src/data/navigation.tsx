@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useLang } from "../i18n";
 
 export type NavItem = {
   path: string;
@@ -16,14 +17,16 @@ export type NavSection = {
 
 const iconClass = "w-5 h-5";
 
-export const navSections: NavSection[] = [
+export function useNavSections(): NavSection[] {
+  const { t } = useLang();
+  return [
   {
-    title: "البداية",
+    title: t("البداية", "Start"),
     items: [
       {
         path: "/",
-        label: "الرئيسية",
-        description: "نظرة عامة على المنصة",
+        label: t("الرئيسية", "Home"),
+        description: t("نظرة عامة على المنصة", "Overview of the platform"),
         available: true,
         icon: (
           <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -36,14 +39,14 @@ export const navSections: NavSection[] = [
     ],
   },
   {
-    title: "هياكل البيانات",
+    title: t("هياكل البيانات", "Data Structures"),
     items: [
       {
         path: "/linked-list",
-        label: "القوائم المرتبطة",
-        description: "إضافة، حذف، بحث، وعكس",
+        label: t("القوائم المرتبطة", "Linked Lists"),
+        description: t("إضافة، حذف، بحث, وعكس", "Insert, delete, search, reverse"),
         available: true,
-        badge: "تفاعلي",
+        badge: t("تفاعلي", "Interactive"),
         icon: (
           <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="9" width="6" height="6" rx="1.5" />
@@ -55,10 +58,10 @@ export const navSections: NavSection[] = [
       },
       {
         path: "/stack",
-        label: "المكدس (Stack)",
+        label: t("المكدس (Stack)", "Stack"),
         description: "LIFO · push / pop / peek",
         available: true,
-        badge: "تفاعلي",
+        badge: t("تفاعلي", "Interactive"),
         icon: (
           <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="4" y="14" width="16" height="5" rx="1.5" />
@@ -69,10 +72,10 @@ export const navSections: NavSection[] = [
       },
       {
         path: "/queue",
-        label: "الطابور (Queue)",
-        description: "FIFO · خطي ودائري",
+        label: t("الطابور (Queue)", "Queue"),
+        description: t("FIFO · خطي ودائري", "FIFO · linear & circular"),
         available: true,
-        badge: "تفاعلي",
+        badge: t("تفاعلي", "Interactive"),
         icon: (
           <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="9" width="4" height="6" rx="1" />
@@ -83,10 +86,10 @@ export const navSections: NavSection[] = [
       },
       {
         path: "/trees",
-        label: "الأشجار الثنائية",
-        description: "BST، الكومة، و Heap Sort",
+        label: t("الأشجار الثنائية", "Binary Trees"),
+        description: t("BST، الكومة، و Heap Sort", "BST, Heap & Heap Sort"),
         available: true,
-        badge: "تفاعلي",
+        badge: t("تفاعلي", "Interactive"),
         icon: (
           <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="4" r="2" />
@@ -101,14 +104,14 @@ export const navSections: NavSection[] = [
     ],
   },
   {
-    title: "الخوارزميات",
+    title: t("الخوارزميات", "Algorithms"),
     items: [
       {
         path: "/sorting",
-        label: "خوارزميات الترتيب",
+        label: t("خوارزميات الترتيب", "Sorting Algorithms"),
         description: "Bubble, Quick, Merge...",
         available: true,
-        badge: "تفاعلي",
+        badge: t("تفاعلي", "Interactive"),
         icon: (
           <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 18h4V8H4zM10 18h4V4h-4zM16 18h4v-7h-4z" />
@@ -117,10 +120,10 @@ export const navSections: NavSection[] = [
       },
       {
         path: "/recursion",
-        label: "الاستدعاء الذاتي",
-        description: "جميع حالات Recursion",
+        label: t("الاستدعاء الذاتي", "Recursion"),
+        description: t("جميع حالات Recursion", "All recursion cases"),
         available: true,
-        badge: "تفاعلي",
+        badge: t("تفاعلي", "Interactive"),
         icon: (
           <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 9a5 5 0 0 1 5-5h7" />
@@ -133,12 +136,12 @@ export const navSections: NavSection[] = [
     ],
   },
   {
-    title: "التحليل",
+    title: t("التحليل", "Analysis"),
     items: [
       {
         path: "/complexity",
-        label: "التعقيد الزمني",
-        description: "تحليل Big-O تفاعلي",
+        label: t("التعقيد الزمني", "Time Complexity"),
+        description: t("تحليل Big-O تفاعلي", "Interactive Big-O analysis"),
         available: true,
         badge: "Big-O",
         icon: (
@@ -150,6 +153,5 @@ export const navSections: NavSection[] = [
       },
     ],
   },
-];
-
-export const allNavItems = navSections.flatMap((s) => s.items);
+  ];
+}

@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PlaybackBar, PseudocodePanel, usePlayer } from "../../components/Player";
 import { ComplexityBadge } from "../../components/ComplexityBadge";
 import { recursionExamples, type ExampleDef } from "./examples";
+import { useLang } from "../../i18n";
 
 export function RecursionVisualizer() {
+  const { t } = useLang();
   const [example, setExample] = useState<ExampleDef>(recursionExamples[0]);
   const [inputs, setInputs] = useState<Record<string, number>>(() =>
     Object.fromEntries(recursionExamples[0].inputs.map((f) => [f.name, f.default]))
@@ -61,7 +63,7 @@ export function RecursionVisualizer() {
         {/* kind + inputs */}
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-surface/70 p-4">
           <div className="flex items-center gap-2 text-sm">
-            <span className="rounded-md bg-brand-500/15 px-2 py-1 text-xs font-bold text-brand-300">نوع الاستدعاء</span>
+            <span className="rounded-md bg-brand-500/15 px-2 py-1 text-xs font-bold text-brand-300">{t("نوع الاستدعاء", "Recursion type")}</span>
             <span className="text-slate-300">{example.kind}</span>
           </div>
           <div className="flex items-end gap-3">
@@ -86,11 +88,11 @@ export function RecursionVisualizer() {
           <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />
           <div className="relative">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-sm font-bold text-white">مكدس الاستدعاءات (Call Stack)</span>
-              <span className="font-mono text-xs text-slate-500">العمق: {frame.stack.length} / {maxDepth}</span>
+              <span className="text-sm font-bold text-white">{t("مكدس الاستدعاءات (Call Stack)", "Call Stack")}</span>
+              <span className="font-mono text-xs text-slate-500">{t("العمق:", "Depth:")} {frame.stack.length} / {maxDepth}</span>
             </div>
             <div className="flex min-h-[260px] flex-col gap-2">
-              {frame.stack.length > 0 && <div className="text-center text-[11px] font-bold text-accent-400">↑ قمة المكدس (الاستدعاء الحالي)</div>}
+              {frame.stack.length > 0 && <div className="text-center text-[11px] font-bold text-accent-400">{t("↑ قمة المكدس (الاستدعاء الحالي)", "↑ Top of stack (current call)")}</div>}
               <AnimatePresence mode="popLayout">
                 {reversed.map((cf) => {
                   const c = colors[cf.status];
@@ -107,7 +109,7 @@ export function RecursionVisualizer() {
                     >
                       <span className="font-mono text-sm font-bold" style={{ color: c.text }}>{cf.label}</span>
                       <div className="flex items-center gap-2">
-                        {cf.status === "waiting" && <span className="text-[10px] text-slate-500">ينتظر…</span>}
+                        {cf.status === "waiting" && <span className="text-[10px] text-slate-500">{t("ينتظر…", "waiting…")}</span>}
                         {cf.status === "returned" && (
                           <span className="rounded-md bg-success/15 px-2 py-0.5 font-mono text-xs font-bold text-success">↩ {cf.ret}</span>
                         )}
@@ -119,7 +121,7 @@ export function RecursionVisualizer() {
               </AnimatePresence>
               {frame.stack.length === 0 && (
                 <div className="grid flex-1 place-items-center text-sm text-slate-500">
-                  {frame.result ? `المكدس فارغ — اكتمل التنفيذ. الناتج: ${frame.result}` : "المكدس فارغ."}
+                  {frame.result ? t(`المكدس فارغ — اكتمل التنفيذ. الناتج: ${frame.result}`, `Stack empty — execution complete. Result: ${frame.result}`) : t("المكدس فارغ.", "The stack is empty.")}
                 </div>
               )}
             </div>
@@ -134,9 +136,9 @@ export function RecursionVisualizer() {
               {frame.result && <span className="rounded-md bg-success/15 px-2 py-0.5 text-xs font-bold text-success">= {frame.result}</span>}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500">زمني</span>
+              <span className="text-xs text-slate-500">{t("زمني", "Time")}</span>
               <ComplexityBadge value={run.time} size="sm" />
-              <span className="text-xs text-slate-500">مكاني</span>
+              <span className="text-xs text-slate-500">{t("مكاني", "Space")}</span>
               <ComplexityBadge value={run.space} size="sm" />
             </div>
           </div>
@@ -150,11 +152,9 @@ export function RecursionVisualizer() {
       <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
         <PseudocodePanel code={run.code} activeLine={frame.codeLine} />
         <div className="rounded-2xl border border-border bg-surface/70 p-4 text-sm text-slate-400">
-          <h4 className="mb-2 font-bold text-white">كل استدعاء = إطار في المكدس</h4>
+          <h4 className="mb-2 font-bold text-white">{t("كل استدعاء = إطار في المكدس", "Each call = a stack frame")}</h4>
           <p className="leading-relaxed">
-            عند كل استدعاء ذاتي يُضاف إطار (frame) لأعلى المكدس ويبقى "ينتظر" حتى يعود
-            الاستدعاء الأعمق. لهذا يكون التعقيد المكاني للاستدعاء الذاتي على الأقل بقدر
-            أقصى عمق للمكدس. الاستدعاء الذيلي يمكن تحويله لحلقة بـ <ComplexityBadge value="O(1)" size="sm" /> مساحة.
+            {t("عند كل استدعاء ذاتي يُضاف إطار (frame) لأعلى المكدس ويبقى \"ينتظر\" حتى يعود الاستدعاء الأعمق. لهذا يكون التعقيد المكاني للاستدعاء الذاتي على الأقل بقدر أقصى عمق للمكدس. الاستدعاء الذيلي يمكن تحويله لحلقة بـ", "On each recursive call a frame is pushed onto the stack and stays \"waiting\" until the deeper call returns. That's why recursion's space complexity is at least the maximum stack depth. Tail recursion can be turned into a loop with")} <ComplexityBadge value="O(1)" size="sm" /> {t("مساحة.", "space.")}
           </p>
         </div>
       </div>

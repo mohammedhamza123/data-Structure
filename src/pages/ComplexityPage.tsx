@@ -12,20 +12,31 @@ import {
 } from "recharts";
 import { PageHeader } from "../components/PageHeader";
 import { complexityMeta, type ComplexityClass } from "../data/complexity";
+import { useLang } from "../i18n";
 
 const order: ComplexityClass[] = ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)", "O(2ⁿ)", "O(n!)"];
 
-const examples: Record<ComplexityClass, string> = {
-  "O(1)": "الوصول لعنصر في مصفوفة بالفهرس، أو إضافة عقدة في بداية قائمة مرتبطة.",
-  "O(log n)": "البحث الثنائي، أو البحث في شجرة BST متوازنة.",
-  "O(n)": "المرور على كل عناصر القائمة مرة واحدة (بحث خطي).",
-  "O(n log n)": "خوارزميات الترتيب الفعّالة مثل Merge Sort و Quick Sort.",
-  "O(n²)": "الترتيب بالفقاعات Bubble Sort والحلقات المتداخلة.",
-  "O(2ⁿ)": "حساب فيبوناتشي بالاستدعاء الذاتي دون تخزين.",
-  "O(n!)": "توليد كل التباديل الممكنة (مشكلة البائع المتجول).",
-};
-
 export function ComplexityPage() {
+  const { t } = useLang();
+  const examples: Record<ComplexityClass, string> = {
+    "O(1)": t("الوصول لعنصر في مصفوفة بالفهرس، أو إضافة عقدة في بداية قائمة مرتبطة.", "Accessing an array element by index, or inserting a node at the head of a linked list."),
+    "O(log n)": t("البحث الثنائي، أو البحث في شجرة BST متوازنة.", "Binary search, or searching in a balanced BST."),
+    "O(n)": t("المرور على كل عناصر القائمة مرة واحدة (بحث خطي).", "Traversing all list elements once (linear search)."),
+    "O(n log n)": t("خوارزميات الترتيب الفعّالة مثل Merge Sort و Quick Sort.", "Efficient sorting algorithms like Merge Sort and Quick Sort."),
+    "O(n²)": t("الترتيب بالفقاعات Bubble Sort والحلقات المتداخلة.", "Bubble Sort and nested loops."),
+    "O(2ⁿ)": t("حساب فيبوناتشي بالاستدعاء الذاتي دون تخزين.", "Computing Fibonacci recursively without memoization."),
+    "O(n!)": t("توليد كل التباديل الممكنة (مشكلة البائع المتجول).", "Generating all possible permutations (the traveling salesman problem)."),
+  };
+  const names: Record<ComplexityClass, string> = {
+    "O(1)": t("ثابت", "Constant"),
+    "O(log n)": t("لوغاريتمي", "Logarithmic"),
+    "O(n)": t("خطي", "Linear"),
+    "O(n log n)": t("خطي-لوغاريتمي", "Linearithmic"),
+    "O(n²)": t("تربيعي", "Quadratic"),
+    "O(2ⁿ)": t("أُسّي", "Exponential"),
+    "O(n!)": t("عاملي", "Factorial"),
+  };
+
   const [n, setN] = useState(16);
   const [active, setActive] = useState<Record<ComplexityClass, boolean>>({
     "O(1)": true,
@@ -56,16 +67,19 @@ export function ComplexityPage() {
   return (
     <div>
       <PageHeader
-        eyebrow="تحليل Big-O"
-        title="التعقيد الزمني والمكاني"
-        description="افهم كيف ينمو وقت تنفيذ الخوارزمية مع حجم المدخلات. قارن بين درجات النمو بصرياً وجرّب أثر تغيير حجم المدخلات n."
+        eyebrow={t("تحليل Big-O", "Big-O analysis")}
+        title={t("التعقيد الزمني والمكاني", "Time & Space Complexity")}
+        description={t(
+          "افهم كيف ينمو وقت تنفيذ الخوارزمية مع حجم المدخلات. قارن بين درجات النمو بصرياً وجرّب أثر تغيير حجم المدخلات n.",
+          "Understand how an algorithm's runtime grows with input size. Compare growth rates visually and experiment with the effect of changing the input size n."
+        )}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-2xl border border-border bg-surface/70 p-5">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-bold text-white">منحنى النمو</h3>
-            <span className="font-mono text-xs text-slate-400">حتى n = 32</span>
+            <h3 className="font-bold text-white">{t("منحنى النمو", "Growth curve")}</h3>
+            <span className="font-mono text-xs text-slate-400">{t("حتى n = 32", "up to n = 32")}</span>
           </div>
           <div className="h-[340px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -118,7 +132,7 @@ export function ComplexityPage() {
         </div>
 
         <div className="rounded-2xl border border-border bg-surface/70 p-5">
-          <h3 className="mb-4 font-bold text-white">عمليات عند n = {n}</h3>
+          <h3 className="mb-4 font-bold text-white">{t("عمليات عند n =", "Operations at n =")} {n}</h3>
           <input
             type="range"
             min={1}
@@ -130,7 +144,7 @@ export function ComplexityPage() {
           <div className="space-y-2.5">
             {order.map((c) => {
               const ops = complexityMeta[c].fn(n);
-              const display = ops > 1e7 ? "هائل جداً" : Math.round(ops).toLocaleString("en-US");
+              const display = ops > 1e7 ? t("هائل جداً", "Huge") : Math.round(ops).toLocaleString("en-US");
               const pct = Math.min(100, (complexityMeta[c].rank / 7) * 100);
               return (
                 <div key={c}>
@@ -171,7 +185,7 @@ export function ComplexityPage() {
                 className="rounded-md px-2 py-0.5 text-xs font-semibold"
                 style={{ color: complexityMeta[c].color, backgroundColor: complexityMeta[c].bg }}
               >
-                {complexityMeta[c].name}
+                {names[c]}
               </span>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-slate-400">{examples[c]}</p>

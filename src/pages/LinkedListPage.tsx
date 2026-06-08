@@ -3,36 +3,41 @@ import { PageHeader } from "../components/PageHeader";
 import { ComplexityBadge } from "../components/ComplexityBadge";
 import { LinkedListVisualizer } from "../visualizers/linkedList/LinkedListVisualizer";
 import type { ComplexityClass } from "../data/complexity";
-
-const opsTable: { name: string; time: ComplexityClass; note: string }[] = [
-  { name: "إضافة للبداية", time: "O(1)", note: "تعديل مؤشر الرأس فقط" },
-  { name: "إضافة للنهاية", time: "O(n)", note: "تتطلب المرور حتى آخر عقدة" },
-  { name: "حذف البداية", time: "O(1)", note: "تحريك الرأس للعقدة التالية" },
-  { name: "حذف النهاية", time: "O(n)", note: "الوصول لما قبل الأخيرة" },
-  { name: "البحث", time: "O(n)", note: "مقارنة خطية للعناصر" },
-  { name: "عكس القائمة", time: "O(n)", note: "ثلاثة مؤشرات بمرور واحد" },
-];
+import { useLang } from "../i18n";
 
 export function LinkedListPage() {
+  const { t, dir } = useLang();
+  const opsTable: { name: string; time: ComplexityClass; note: string }[] = [
+    { name: t("إضافة للبداية", "Insert at head"), time: "O(1)", note: t("تعديل مؤشر الرأس فقط", "Update the head pointer only") },
+    { name: t("إضافة للنهاية", "Insert at tail"), time: "O(n)", note: t("تتطلب المرور حتى آخر عقدة", "Requires traversing to the last node") },
+    { name: t("حذف البداية", "Delete head"), time: "O(1)", note: t("تحريك الرأس للعقدة التالية", "Move head to the next node") },
+    { name: t("حذف النهاية", "Delete tail"), time: "O(n)", note: t("الوصول لما قبل الأخيرة", "Reach the node before last") },
+    { name: t("البحث", "Search"), time: "O(n)", note: t("مقارنة خطية للعناصر", "Linear comparison of elements") },
+    { name: t("عكس القائمة", "Reverse list"), time: "O(n)", note: t("ثلاثة مؤشرات بمرور واحد", "Three pointers in a single pass") },
+  ];
+
   return (
     <div>
       <PageHeader
-        eyebrow="هياكل البيانات"
-        title="القوائم المرتبطة المفردة"
-        description="سلسلة من العقد، كل عقدة تحمل قيمة ومؤشراً للعقدة التالية. جرّب العمليات وشاهد حركة المؤشرات خطوة بخطوة مع الكود الزائف المقابل."
+        eyebrow={t("هياكل البيانات", "Data Structures")}
+        title={t("القوائم المرتبطة المفردة", "Singly Linked Lists")}
+        description={t(
+          "سلسلة من العقد، كل عقدة تحمل قيمة ومؤشراً للعقدة التالية. جرّب العمليات وشاهد حركة المؤشرات خطوة بخطوة مع الكود الزائف المقابل.",
+          "A chain of nodes, each holding a value and a pointer to the next node. Try the operations and watch the pointers move step by step alongside the matching pseudocode."
+        )}
       />
 
       <LinkedListVisualizer />
 
       <section className="mt-10">
-        <h2 className="mb-4 text-xl font-extrabold text-white">ملخّص التعقيد الزمني</h2>
+        <h2 className="mb-4 text-xl font-extrabold text-white">{t("ملخّص التعقيد الزمني", "Time complexity summary")}</h2>
         <div className="overflow-hidden rounded-2xl border border-border">
-          <table className="w-full text-right text-sm">
+          <table className={`w-full text-sm ${dir === "rtl" ? "text-right" : "text-left"}`}>
             <thead className="bg-surface-2 text-slate-300">
               <tr>
-                <th className="px-4 py-3 font-bold">العملية</th>
-                <th className="px-4 py-3 font-bold">التعقيد الزمني</th>
-                <th className="px-4 py-3 font-bold">الملاحظة</th>
+                <th className="px-4 py-3 font-bold">{t("العملية", "Operation")}</th>
+                <th className="px-4 py-3 font-bold">{t("التعقيد الزمني", "Time complexity")}</th>
+                <th className="px-4 py-3 font-bold">{t("الملاحظة", "Note")}</th>
               </tr>
             </thead>
             <tbody>

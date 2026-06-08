@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLang } from "../i18n";
 
 type Props = {
   title: string;
@@ -7,6 +8,7 @@ type Props = {
 };
 
 export function ComingSoonPage({ title, description }: Props) {
+  const { t } = useLang();
   return (
     <div className="grid min-h-[60vh] place-items-center">
       <div className="max-w-lg text-center">
@@ -21,18 +23,21 @@ export function ComingSoonPage({ title, description }: Props) {
           </svg>
         </motion.div>
         <span className="mb-3 inline-block rounded-full bg-accent-500/15 px-3 py-1 text-xs font-bold text-accent-400">
-          قيد التطوير
+          {t("قيد التطوير", "Under development")}
         </span>
         <h1 className="text-3xl font-extrabold text-white">{title}</h1>
         <p className="mt-3 text-slate-400">{description}</p>
         <p className="mt-2 text-sm text-slate-500">
-          هذا القسم سيُبنى بنفس مستوى الجودة التفاعلية لقسم القوائم المرتبطة.
+          {t(
+            "هذا القسم سيُبنى بنفس مستوى الجودة التفاعلية لقسم القوائم المرتبطة.",
+            "This section will be built with the same interactive quality as the linked lists section."
+          )}
         </p>
         <Link
           to="/linked-list"
           className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-brand-500 to-accent-500 px-6 py-3 font-bold text-white transition-transform hover:scale-[1.03]"
         >
-          جرّب القوائم المرتبطة الآن
+          {t("جرّب القوائم المرتبطة الآن", "Try linked lists now")}
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M11 18l-6-6 6-6" />
           </svg>

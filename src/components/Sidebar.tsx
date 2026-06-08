@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { navSections } from "../data/navigation";
+import { useNavSections } from "../data/navigation";
+import { useLang } from "../i18n";
 
 type Props = {
   open: boolean;
@@ -8,6 +9,10 @@ type Props = {
 };
 
 export function Sidebar({ open, onClose }: Props) {
+  const { t, dir } = useLang();
+  const navSections = useNavSections();
+  const side = dir === "rtl" ? "right-0 border-l" : "left-0 border-r";
+  const closedShift = dir === "rtl" ? "translate-x-full" : "-translate-x-full";
   return (
     <>
       <AnimatePresence>
@@ -23,8 +28,8 @@ export function Sidebar({ open, onClose }: Props) {
       </AnimatePresence>
 
       <aside
-        className={`fixed inset-y-0 right-0 z-40 flex w-72 flex-col border-l border-border bg-bg-soft/95 backdrop-blur-xl transition-transform duration-300 lg:translate-x-0 ${
-          open ? "translate-x-0" : "translate-x-full lg:translate-x-0"
+        className={`fixed inset-y-0 ${side} z-40 flex w-72 flex-col border-border bg-bg-soft/95 backdrop-blur-xl transition-transform duration-300 lg:translate-x-0 ${
+          open ? "translate-x-0" : `${closedShift} lg:translate-x-0`
         }`}
       >
         <div className="flex items-center gap-3 px-6 py-6">
@@ -37,8 +42,8 @@ export function Sidebar({ open, onClose }: Props) {
             </svg>
           </div>
           <div className="leading-tight">
-            <div className="text-lg font-extrabold text-white">خوارزميات</div>
-            <div className="text-xs text-slate-400">هياكل البيانات التفاعلية</div>
+            <div className="text-lg font-extrabold text-white">{t("خوارزميات", "Algorithms")}</div>
+            <div className="text-xs text-slate-400">{t("هياكل البيانات التفاعلية", "Interactive Data Structures")}</div>
           </div>
         </div>
 
@@ -103,9 +108,9 @@ export function Sidebar({ open, onClose }: Props) {
         </nav>
 
         <div className="border-t border-border px-6 py-4 text-center text-[11px] text-slate-500">
-          <div>صُمّم بشغف لتعليم الخوارزميات</div>
+          <div>{t("صُمّم بشغف لتعليم الخوارزميات", "Crafted with passion to teach algorithms")}</div>
           <div className="mt-1">
-            تطوير{" "}
+            {t("تطوير", "Developed by")}{" "}
             <a
               href="https://github.com/mohammedhamza123"
               target="_blank"
