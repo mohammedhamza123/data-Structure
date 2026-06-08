@@ -103,7 +103,18 @@ export function Sidebar({ open, onClose }: Props) {
         </nav>
 
         <div className="border-t border-border px-6 py-4 text-center text-[11px] text-slate-500">
-          صُمّم بشغف لتعليم الخوارزميات
+          <div>صُمّم بشغف لتعليم الخوارزميات</div>
+          <div className="mt-1">
+            تطوير{" "}
+            <a
+              href="https://github.com/mohammedhamza123"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-brand-300 transition-colors hover:text-brand-200"
+            >
+              mohammed_hamza
+            </a>
+          </div>
         </div>
       </aside>
     </>
