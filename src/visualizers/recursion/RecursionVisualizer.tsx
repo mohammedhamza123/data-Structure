@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PlaybackBar, PseudocodePanel, usePlayer } from "../../components/Player";
 import { ComplexityBadge } from "../../components/ComplexityBadge";
-import { recursionExamples, type ExampleDef } from "./examples";
+import { getRecursionExamples, type ExampleDef } from "./examples";
 import { useLang } from "../../i18n";
 
 export function RecursionVisualizer() {
   const { t } = useLang();
-  const [example, setExample] = useState<ExampleDef>(recursionExamples[0]);
+  const recursionExamples = useMemo(() => getRecursionExamples(t), [t]);
+  const [exampleKey, setExampleKey] = useState<string>(recursionExamples[0].key);
+  const example = recursionExamples.find((e) => e.key === exampleKey) ?? recursionExamples[0];
   const [inputs, setInputs] = useState<Record<string, number>>(() =>
     Object.fromEntries(recursionExamples[0].inputs.map((f) => [f.name, f.default]))
   );
@@ -23,7 +25,7 @@ export function RecursionVisualizer() {
   }, [run, setIdx, setPlaying]);
 
   const pickExample = (ex: ExampleDef) => {
-    setExample(ex);
+    setExampleKey(ex.key);
     setInputs(Object.fromEntries(ex.inputs.map((f) => [f.name, f.default])));
   };
   const setInput = (name: string, v: number, field: { min: number; max: number }) => {

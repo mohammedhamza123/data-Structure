@@ -14,8 +14,8 @@ export function HeapVisualizer() {
 
   const run = useMemo(() => {
     const items = makeHeapItems(values);
-    return mode === "heapify" ? heapify(items).run : heapSort(items).run;
-  }, [mode, values]);
+    return mode === "heapify" ? heapify(t, items).run : heapSort(t, items).run;
+  }, [mode, values, t]);
 
   const player = usePlayer(run.frames.length, 750);
   const { idx, setIdx, playing, setPlaying, speed, setSpeed, toggle } = player;

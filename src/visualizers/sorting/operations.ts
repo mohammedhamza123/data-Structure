@@ -1,4 +1,5 @@
 import type { ComplexityClass } from "../../data/complexity";
+import type { TFunction } from "../../i18n";
 
 export type SortItem = { id: string; value: number };
 
@@ -64,7 +65,7 @@ class Recorder {
   }
 }
 
-export function bubbleSort(items: SortItem[]): SortRun {
+export function bubbleSort(t: TFunction, items: SortItem[]): SortRun {
   const r = new Recorder(items);
   const n = r.items.length;
   const code = [
@@ -73,25 +74,25 @@ export function bubbleSort(items: SortItem[]): SortRun {
     "    if (a[j] > a[j + 1])",
     "      swap(a[j], a[j + 1])",
   ];
-  r.snap({ codeLine: 0, message: "نبدأ ترتيب الفقاعات: نقارن كل عنصرين متجاورين." });
+  r.snap({ codeLine: 0, message: t("نبدأ ترتيب الفقاعات: نقارن كل عنصرين متجاورين.", "Start bubble sort: compare each pair of adjacent elements.") });
   for (let i = 0; i < n - 1; i++) {
     for (let j = 0; j < n - i - 1; j++) {
-      r.snap({ comparing: [j, j + 1], codeLine: 2, message: `مقارنة ${r.items[j].value} و ${r.items[j + 1].value}.` });
+      r.snap({ comparing: [j, j + 1], codeLine: 2, message: t(`مقارنة ${r.items[j].value} و ${r.items[j + 1].value}.`, `Compare ${r.items[j].value} and ${r.items[j + 1].value}.`) });
       if (r.items[j].value > r.items[j + 1].value) {
-        r.snap({ swapping: [j, j + 1], codeLine: 3, message: `${r.items[j].value} > ${r.items[j + 1].value} ← نبدّلهما.` });
+        r.snap({ swapping: [j, j + 1], codeLine: 3, message: t(`${r.items[j].value} > ${r.items[j + 1].value} ← نبدّلهما.`, `${r.items[j].value} > ${r.items[j + 1].value} ← swap them.`) });
         r.swap(j, j + 1);
-        r.snap({ swapping: [j, j + 1], codeLine: 3, message: "تمّ التبديل." });
+        r.snap({ swapping: [j, j + 1], codeLine: 3, message: t("تمّ التبديل.", "Swapped.") });
       }
     }
     r.sorted.add(n - 1 - i);
-    r.snap({ codeLine: 1, message: `أكبر عنصر متبقٍّ استقر في موضعه الصحيح.` });
+    r.snap({ codeLine: 1, message: t(`أكبر عنصر متبقٍّ استقر في موضعه الصحيح.`, `The largest remaining element settled into its correct position.`) });
   }
   r.markAllSorted();
-  r.snap({ codeLine: 0, message: "اكتمل الترتيب! المصفوفة مرتّبة تصاعدياً." });
-  return { name: "ترتيب الفقاعات", best: "O(n)", average: "O(n²)", worst: "O(n²)", space: "O(1)", stable: true, code, frames: r.frames };
+  r.snap({ codeLine: 0, message: t("اكتمل الترتيب! المصفوفة مرتّبة تصاعدياً.", "Sorting complete! The array is sorted in ascending order.") });
+  return { name: t("ترتيب الفقاعات", "Bubble Sort"), best: "O(n)", average: "O(n²)", worst: "O(n²)", space: "O(1)", stable: true, code, frames: r.frames };
 }
 
-export function selectionSort(items: SortItem[]): SortRun {
+export function selectionSort(t: TFunction, items: SortItem[]): SortRun {
   const r = new Recorder(items);
   const n = r.items.length;
   const code = [
@@ -101,30 +102,30 @@ export function selectionSort(items: SortItem[]): SortRun {
     "    if (a[j] < a[min]) min = j",
     "  swap(a[i], a[min])",
   ];
-  r.snap({ codeLine: 0, message: "ترتيب الاختيار: نبحث عن الأصغر ونضعه في المقدمة." });
+  r.snap({ codeLine: 0, message: t("ترتيب الاختيار: نبحث عن الأصغر ونضعه في المقدمة.", "Selection sort: find the smallest element and place it at the front.") });
   for (let i = 0; i < n - 1; i++) {
     let min = i;
-    r.snap({ comparing: [min], pivot: i, codeLine: 1, message: `نفترض أن الأصغر عند الموضع ${i}.` });
+    r.snap({ comparing: [min], pivot: i, codeLine: 1, message: t(`نفترض أن الأصغر عند الموضع ${i}.`, `Assume the smallest is at index ${i}.`) });
     for (let j = i + 1; j < n; j++) {
-      r.snap({ comparing: [min, j], pivot: i, codeLine: 3, message: `هل ${r.items[j].value} < ${r.items[min].value}؟` });
+      r.snap({ comparing: [min, j], pivot: i, codeLine: 3, message: t(`هل ${r.items[j].value} < ${r.items[min].value}؟`, `Is ${r.items[j].value} < ${r.items[min].value}?`) });
       if (r.items[j].value < r.items[min].value) {
         min = j;
-        r.snap({ comparing: [min], pivot: i, codeLine: 3, message: `أصغر جديد: ${r.items[min].value}.` });
+        r.snap({ comparing: [min], pivot: i, codeLine: 3, message: t(`أصغر جديد: ${r.items[min].value}.`, `New smallest: ${r.items[min].value}.`) });
       }
     }
     if (min !== i) {
-      r.snap({ swapping: [i, min], codeLine: 4, message: `نبدّل العنصر ${r.items[i].value} مع الأصغر ${r.items[min].value}.` });
+      r.snap({ swapping: [i, min], codeLine: 4, message: t(`نبدّل العنصر ${r.items[i].value} مع الأصغر ${r.items[min].value}.`, `Swap element ${r.items[i].value} with the smallest ${r.items[min].value}.`) });
       r.swap(i, min);
     }
     r.sorted.add(i);
-    r.snap({ codeLine: 4, message: `الموضع ${i} أصبح في مكانه الصحيح.` });
+    r.snap({ codeLine: 4, message: t(`الموضع ${i} أصبح في مكانه الصحيح.`, `Index ${i} is now in its correct place.`) });
   }
   r.markAllSorted();
-  r.snap({ codeLine: 0, message: "اكتمل الترتيب!" });
-  return { name: "ترتيب الاختيار", best: "O(n²)", average: "O(n²)", worst: "O(n²)", space: "O(1)", stable: false, code, frames: r.frames };
+  r.snap({ codeLine: 0, message: t("اكتمل الترتيب!", "Sorting complete!") });
+  return { name: t("ترتيب الاختيار", "Selection Sort"), best: "O(n²)", average: "O(n²)", worst: "O(n²)", space: "O(1)", stable: false, code, frames: r.frames };
 }
 
-export function insertionSort(items: SortItem[]): SortRun {
+export function insertionSort(t: TFunction, items: SortItem[]): SortRun {
   const r = new Recorder(items);
   const n = r.items.length;
   const code = [
@@ -134,26 +135,26 @@ export function insertionSort(items: SortItem[]): SortRun {
     "    swap(a[j - 1], a[j]); j--",
   ];
   r.sorted.add(0);
-  r.snap({ codeLine: 0, message: "ترتيب الإدراج: نبني جزءاً مرتّباً عنصراً عنصراً." });
+  r.snap({ codeLine: 0, message: t("ترتيب الإدراج: نبني جزءاً مرتّباً عنصراً عنصراً.", "Insertion sort: build a sorted portion one element at a time.") });
   for (let i = 1; i < n; i++) {
     let j = i;
-    r.snap({ comparing: [i], codeLine: 1, message: `نُدرج العنصر ${r.items[i].value} في الجزء المرتّب.` });
+    r.snap({ comparing: [i], codeLine: 1, message: t(`نُدرج العنصر ${r.items[i].value} في الجزء المرتّب.`, `Insert element ${r.items[i].value} into the sorted portion.`) });
     while (j > 0 && r.items[j - 1].value > r.items[j].value) {
-      r.snap({ comparing: [j - 1, j], codeLine: 2, message: `${r.items[j - 1].value} > ${r.items[j].value} ← نزيحه لليمين.` });
+      r.snap({ comparing: [j - 1, j], codeLine: 2, message: t(`${r.items[j - 1].value} > ${r.items[j].value} ← نزيحه لليمين.`, `${r.items[j - 1].value} > ${r.items[j].value} ← shift it right.`) });
       r.swap(j - 1, j);
-      r.snap({ swapping: [j - 1, j], codeLine: 3, message: "إزاحة." });
+      r.snap({ swapping: [j - 1, j], codeLine: 3, message: t("إزاحة.", "Shift.") });
       j--;
     }
     r.sorted.add(i);
     for (let k = 0; k <= i; k++) r.sorted.add(k);
-    r.snap({ codeLine: 0, message: `العنصر استقر في موضعه ضمن الجزء المرتّب.` });
+    r.snap({ codeLine: 0, message: t(`العنصر استقر في موضعه ضمن الجزء المرتّب.`, `The element settled into its place within the sorted portion.`) });
   }
   r.markAllSorted();
-  r.snap({ codeLine: 0, message: "اكتمل الترتيب!" });
-  return { name: "ترتيب الإدراج", best: "O(n)", average: "O(n²)", worst: "O(n²)", space: "O(1)", stable: true, code, frames: r.frames };
+  r.snap({ codeLine: 0, message: t("اكتمل الترتيب!", "Sorting complete!") });
+  return { name: t("ترتيب الإدراج", "Insertion Sort"), best: "O(n)", average: "O(n²)", worst: "O(n²)", space: "O(1)", stable: true, code, frames: r.frames };
 }
 
-export function quickSort(items: SortItem[]): SortRun {
+export function quickSort(t: TFunction, items: SortItem[]): SortRun {
   const r = new Recorder(items);
   const code = [
     "quickSort(lo, hi):",
@@ -163,44 +164,44 @@ export function quickSort(items: SortItem[]): SortRun {
     "  swap(a[i + 1], a[hi])",
     "  recurse(lo, i), recurse(i + 2, hi)",
   ];
-  r.snap({ codeLine: 0, message: "الترتيب السريع: نختار محوراً ونقسّم حوله." });
+  r.snap({ codeLine: 0, message: t("الترتيب السريع: نختار محوراً ونقسّم حوله.", "Quick sort: choose a pivot and partition around it.") });
 
   const qs = (lo: number, hi: number) => {
     if (lo > hi) return;
     if (lo === hi) {
       r.sorted.add(lo);
-      r.snap({ codeLine: 0, message: `العنصر المفرد عند ${lo} في مكانه.` });
+      r.snap({ codeLine: 0, message: t(`العنصر المفرد عند ${lo} في مكانه.`, `The single element at ${lo} is in place.`) });
       return;
     }
     const pivotIdx = hi;
-    r.snap({ pivot: pivotIdx, codeLine: 1, message: `المحور = ${r.items[pivotIdx].value} (آخر عنصر في المجال).` });
+    r.snap({ pivot: pivotIdx, codeLine: 1, message: t(`المحور = ${r.items[pivotIdx].value} (آخر عنصر في المجال).`, `Pivot = ${r.items[pivotIdx].value} (last element in the range).`) });
     let i = lo - 1;
     for (let j = lo; j < hi; j++) {
-      r.snap({ comparing: [j], pivot: pivotIdx, codeLine: 2, message: `هل ${r.items[j].value} < المحور ${r.items[pivotIdx].value}؟` });
+      r.snap({ comparing: [j], pivot: pivotIdx, codeLine: 2, message: t(`هل ${r.items[j].value} < المحور ${r.items[pivotIdx].value}؟`, `Is ${r.items[j].value} < pivot ${r.items[pivotIdx].value}?`) });
       if (r.items[j].value < r.items[pivotIdx].value) {
         i++;
         if (i !== j) {
-          r.snap({ swapping: [i, j], pivot: pivotIdx, codeLine: 3, message: `نعم ← نبدّل ${r.items[i].value} و ${r.items[j].value}.` });
+          r.snap({ swapping: [i, j], pivot: pivotIdx, codeLine: 3, message: t(`نعم ← نبدّل ${r.items[i].value} و ${r.items[j].value}.`, `Yes ← swap ${r.items[i].value} and ${r.items[j].value}.`) });
           r.swap(i, j);
-          r.snap({ swapping: [i, j], pivot: pivotIdx, codeLine: 3, message: "تمّ التبديل." });
+          r.snap({ swapping: [i, j], pivot: pivotIdx, codeLine: 3, message: t("تمّ التبديل.", "Swapped.") });
         }
       }
     }
-    r.snap({ swapping: [i + 1, hi], pivot: pivotIdx, codeLine: 4, message: `نضع المحور في موضعه النهائي ${i + 1}.` });
+    r.snap({ swapping: [i + 1, hi], pivot: pivotIdx, codeLine: 4, message: t(`نضع المحور في موضعه النهائي ${i + 1}.`, `Place the pivot in its final position ${i + 1}.`) });
     r.swap(i + 1, hi);
     r.sorted.add(i + 1);
-    r.snap({ codeLine: 4, message: `المحور ${r.items[i + 1].value} استقر. كل ما يساره أصغر وما يمينه أكبر.` });
+    r.snap({ codeLine: 4, message: t(`المحور ${r.items[i + 1].value} استقر. كل ما يساره أصغر وما يمينه أكبر.`, `The pivot ${r.items[i + 1].value} settled. Everything to its left is smaller and to its right is larger.`) });
     qs(lo, i);
     qs(i + 2, hi);
   };
 
   qs(0, r.items.length - 1);
   r.markAllSorted();
-  r.snap({ codeLine: 0, message: "اكتمل الترتيب!" });
-  return { name: "الترتيب السريع", best: "O(n log n)", average: "O(n log n)", worst: "O(n²)", space: "O(log n)", stable: false, code, frames: r.frames };
+  r.snap({ codeLine: 0, message: t("اكتمل الترتيب!", "Sorting complete!") });
+  return { name: t("الترتيب السريع", "Quick Sort"), best: "O(n log n)", average: "O(n log n)", worst: "O(n²)", space: "O(log n)", stable: false, code, frames: r.frames };
 }
 
-export function mergeSort(items: SortItem[]): SortRun {
+export function mergeSort(t: TFunction, items: SortItem[]): SortRun {
   const r = new Recorder(items);
   const code = [
     "mergeSort(lo, hi):",
@@ -209,7 +210,7 @@ export function mergeSort(items: SortItem[]): SortRun {
     "  merge: compare fronts of both halves",
     "  write smaller value back into place",
   ];
-  r.snap({ codeLine: 0, message: "ترتيب الدمج: نقسّم المصفوفة ثم ندمج الأجزاء مرتّبة." });
+  r.snap({ codeLine: 0, message: t("ترتيب الدمج: نقسّم المصفوفة ثم ندمج الأجزاء مرتّبة.", "Merge sort: split the array, then merge the parts in sorted order.") });
 
   const merge = (lo: number, mid: number, hi: number) => {
     const left = r.items.slice(lo, mid + 1);
@@ -218,7 +219,7 @@ export function mergeSort(items: SortItem[]): SortRun {
     let i = 0;
     let j = 0;
     while (i < left.length && j < right.length) {
-      r.snap({ comparing: [lo + i, mid + 1 + j], codeLine: 3, message: `ندمج: نقارن ${left[i].value} و ${right[j].value}.` });
+      r.snap({ comparing: [lo + i, mid + 1 + j], codeLine: 3, message: t(`ندمج: نقارن ${left[i].value} و ${right[j].value}.`, `Merging: compare ${left[i].value} and ${right[j].value}.`) });
       if (left[i].value <= right[j].value) merged.push(left[i++]);
       else merged.push(right[j++]);
     }
@@ -226,13 +227,13 @@ export function mergeSort(items: SortItem[]): SortRun {
     while (j < right.length) merged.push(right[j++]);
     for (let k = 0; k < merged.length; k++) r.items[lo + k] = merged[k];
     const range = Array.from({ length: hi - lo + 1 }, (_, k) => lo + k);
-    r.snap({ swapping: range, codeLine: 4, message: `دُمج المجال [${lo}..${hi}] بترتيب صحيح.` });
+    r.snap({ swapping: range, codeLine: 4, message: t(`دُمج المجال [${lo}..${hi}] بترتيب صحيح.`, `Merged the range [${lo}..${hi}] in correct order.`) });
   };
 
   const ms = (lo: number, hi: number) => {
     if (lo >= hi) return;
     const mid = Math.floor((lo + hi) / 2);
-    r.snap({ comparing: Array.from({ length: hi - lo + 1 }, (_, k) => lo + k), codeLine: 1, message: `نقسّم المجال [${lo}..${hi}] عند ${mid}.` });
+    r.snap({ comparing: Array.from({ length: hi - lo + 1 }, (_, k) => lo + k), codeLine: 1, message: t(`نقسّم المجال [${lo}..${hi}] عند ${mid}.`, `Split the range [${lo}..${hi}] at ${mid}.`) });
     ms(lo, mid);
     ms(mid + 1, hi);
     merge(lo, mid, hi);
@@ -240,14 +241,18 @@ export function mergeSort(items: SortItem[]): SortRun {
 
   ms(0, r.items.length - 1);
   r.markAllSorted();
-  r.snap({ codeLine: 0, message: "اكتمل الترتيب!" });
-  return { name: "ترتيب الدمج", best: "O(n log n)", average: "O(n log n)", worst: "O(n log n)", space: "O(n)", stable: true, code, frames: r.frames };
+  r.snap({ codeLine: 0, message: t("اكتمل الترتيب!", "Sorting complete!") });
+  return { name: t("ترتيب الدمج", "Merge Sort"), best: "O(n log n)", average: "O(n log n)", worst: "O(n log n)", space: "O(n)", stable: true, code, frames: r.frames };
 }
 
-export const sortAlgorithms: Record<SortKey, { label: string; run: (items: SortItem[]) => SortRun }> = {
-  bubble: { label: "الفقاعات", run: bubbleSort },
-  selection: { label: "الاختيار", run: selectionSort },
-  insertion: { label: "الإدراج", run: insertionSort },
-  quick: { label: "السريع", run: quickSort },
-  merge: { label: "الدمج", run: mergeSort },
-};
+export function getSortAlgorithms(
+  t: TFunction
+): Record<SortKey, { label: string; run: (items: SortItem[]) => SortRun }> {
+  return {
+    bubble: { label: t("الفقاعات", "Bubble"), run: (items) => bubbleSort(t, items) },
+    selection: { label: t("الاختيار", "Selection"), run: (items) => selectionSort(t, items) },
+    insertion: { label: t("الإدراج", "Insertion"), run: (items) => insertionSort(t, items) },
+    quick: { label: t("السريع", "Quick"), run: (items) => quickSort(t, items) },
+    merge: { label: t("الدمج", "Merge"), run: (items) => mergeSort(t, items) },
+  };
+}

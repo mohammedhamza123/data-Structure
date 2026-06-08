@@ -1,4 +1,5 @@
 import type { ComplexityClass } from "../../data/complexity";
+import type { TFunction } from "../../i18n";
 
 export type QueueState = {
   cells: (number | null)[];
@@ -60,16 +61,16 @@ const circularEnqCode = ["enqueue(x):", "  if (count == capacity) full", "  rear
 const linearDeqCode = ["dequeue():", "  if (count == 0) underflow", "  x = queue[front]", "  front++; count--", "  return x"];
 const circularDeqCode = ["dequeue():", "  if (count == 0) empty", "  x = queue[front]", "  front = (front + 1) % capacity", "  count--; return x"];
 
-export function enqueue(state: QueueState, value: number): QueueRun {
+export function enqueue(t: TFunction, state: QueueState, value: number): QueueRun {
   const s: QueueState = { ...state, cells: [...state.cells] };
   const code = s.circular ? circularEnqCode : linearEnqCode;
-  const frames: QueueFrame[] = [snap(s, { codeLine: 0, message: `نريد إضافة ${value} إلى مؤخرة الطابور (rear).` })];
+  const frames: QueueFrame[] = [snap(s, { codeLine: 0, message: t(`نريد إضافة ${value} إلى مؤخرة الطابور (rear).`, `We want to enqueue ${value} at the rear of the queue.`) })];
 
   const full = s.circular ? s.count === s.capacity : s.rear === s.capacity - 1;
   if (full) {
     const msg = s.circular
-      ? "الطابور ممتلئ (count == capacity) — Overflow!"
-      : "الطابور ممتلئ من جهة الـ rear — Overflow! (حتى لو توجد مساحة بعد front، الطابور الخطي لا يعيد استخدامها).";
+      ? t("الطابور ممتلئ (count == capacity) — Overflow!", "The queue is full (count == capacity) — Overflow!")
+      : t("الطابور ممتلئ من جهة الـ rear — Overflow! (حتى لو توجد مساحة بعد front، الطابور الخطي لا يعيد استخدامها).", "The queue is full at the rear — Overflow! (Even if there is space after front, the linear queue does not reuse it).");
     frames.push(snap(s, { codeLine: 1, message: msg }));
     return { name: `Enqueue ${value}`, time: "O(1)", space: "O(1)", code, frames, state: s };
   }
@@ -78,11 +79,11 @@ export function enqueue(state: QueueState, value: number): QueueRun {
   else s.rear = s.rear + 1;
   s.cells[s.rear] = value;
   s.count += 1;
-  frames.push(snap(s, { active: [s.rear], enter: s.rear, codeLine: 3, message: `وضعنا ${value} عند rear=${s.rear}. O(1).` }));
+  frames.push(snap(s, { active: [s.rear], enter: s.rear, codeLine: 3, message: t(`وضعنا ${value} عند rear=${s.rear}. O(1).`, `Placed ${value} at rear=${s.rear}. O(1).`) }));
   return { name: `Enqueue ${value}`, time: "O(1)", space: "O(1)", code, frames, state: s };
 }
 
-export function dequeue(state: QueueState): QueueRun {
+export function dequeue(t: TFunction, state: QueueState): QueueRun {
   const s: QueueState = { ...state, cells: [...state.cells] };
   const code = s.circular ? circularDeqCode : linearDeqCode;
   if (s.count === 0) {
@@ -91,16 +92,16 @@ export function dequeue(state: QueueState): QueueRun {
       time: "O(1)",
       space: "O(1)",
       code,
-      frames: [snap(s, { codeLine: 1, message: "الطابور فارغ — Underflow! لا شيء لإخراجه." })],
+      frames: [snap(s, { codeLine: 1, message: t("الطابور فارغ — Underflow! لا شيء لإخراجه.", "The queue is empty — Underflow! Nothing to dequeue.") })],
       state: s,
     };
   }
   const oldFront = s.front;
   const value = s.cells[oldFront];
-  const frames: QueueFrame[] = [snap(s, { active: [oldFront], codeLine: 2, message: `نقرأ القيمة من المقدمة front=${oldFront}: ${value}.` })];
+  const frames: QueueFrame[] = [snap(s, { active: [oldFront], codeLine: 2, message: t(`نقرأ القيمة من المقدمة front=${oldFront}: ${value}.`, `Read the value from the front front=${oldFront}: ${value}.`) })];
   s.cells[oldFront] = null;
   s.front = s.circular ? (s.front + 1) % s.capacity : s.front + 1;
   s.count -= 1;
-  frames.push(snap(s, { exit: oldFront, codeLine: 3, message: `أخرجنا ${value}، وتقدّم front إلى ${s.front}. O(1).` }));
+  frames.push(snap(s, { exit: oldFront, codeLine: 3, message: t(`أخرجنا ${value}، وتقدّم front إلى ${s.front}. O(1).`, `Dequeued ${value}, and front advanced to ${s.front}. O(1).`) }));
   return { name: "Dequeue", time: "O(1)", space: "O(1)", code, frames, state: s };
 }

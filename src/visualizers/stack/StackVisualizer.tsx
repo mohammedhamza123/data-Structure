@@ -130,9 +130,9 @@ export function StackVisualizer() {
               <span className="text-xs font-semibold text-slate-400">{t("القيمة", "Value")}</span>
               <input type="number" value={value} onChange={(e) => setValue(e.target.value)} className="w-28 rounded-lg border border-border bg-bg-soft px-3 py-2 font-mono text-sm text-white outline-none focus:border-brand-500" />
             </label>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(push(items, val()))}>{t("Push (إضافة)", "Push")}</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(pop(items))}>{t("Pop (سحب)", "Pop")}</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(peek(items))}>{t("Peek (نظرة)", "Peek")}</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(push(t, items, val()))}>{t("Push (إضافة)", "Push")}</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(pop(t, items))}>{t("Pop (سحب)", "Pop")}</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(peek(t, items))}>{t("Peek (نظرة)", "Peek")}</button>
             <button className={actionBtn} disabled={busy} onClick={reset}>{t("إعادة تعيين", "Reset")}</button>
             <button className={actionBtn} disabled={busy} onClick={clear}>{t("تفريغ", "Clear")}</button>
           </div>

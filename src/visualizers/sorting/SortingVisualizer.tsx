@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { ComplexityBadge } from "../../components/ComplexityBadge";
 import {
+  getSortAlgorithms,
   makeItems,
   randomValues,
-  sortAlgorithms,
   type SortKey,
 } from "./operations";
 import { useLang } from "../../i18n";
@@ -27,7 +27,8 @@ export function SortingVisualizer() {
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1.5);
 
-  const run = useMemo(() => sortAlgorithms[algo].run(makeItems(values)), [algo, values]);
+  const sortAlgorithms = useMemo(() => getSortAlgorithms(t), [t]);
+  const run = useMemo(() => sortAlgorithms[algo].run(makeItems(values)), [sortAlgorithms, algo, values]);
   const lastFrame = run.frames.length - 1;
   const frame = run.frames[Math.min(frameIdx, lastFrame)];
   const maxVal = useMemo(() => Math.max(...values, 1), [values]);

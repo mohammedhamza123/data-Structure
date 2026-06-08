@@ -225,17 +225,17 @@ export function LinkedListVisualizer() {
 
           <div className="space-y-3">
             <ButtonGroup label={t("إضافة", "Insert")}>
-              <button className={actionBtn} disabled={busy} onClick={() => run((n) => insertHead(n, val()))}>{t("للبداية", "At head")}</button>
-              <button className={actionBtn} disabled={busy} onClick={() => run((n) => insertTail(n, val()))}>{t("للنهاية", "At tail")}</button>
-              <button className={actionBtn} disabled={busy} onClick={() => run((n) => insertAt(n, idx(), val()))}>{t("عند الموضع", "At index")}</button>
+              <button className={actionBtn} disabled={busy} onClick={() => run((n) => insertHead(t, n, val()))}>{t("للبداية", "At head")}</button>
+              <button className={actionBtn} disabled={busy} onClick={() => run((n) => insertTail(t, n, val()))}>{t("للنهاية", "At tail")}</button>
+              <button className={actionBtn} disabled={busy} onClick={() => run((n) => insertAt(t, n, idx(), val()))}>{t("عند الموضع", "At index")}</button>
             </ButtonGroup>
             <ButtonGroup label={t("حذف", "Delete")}>
-              <button className={actionBtn} disabled={busy} onClick={() => run((n) => deleteHead(n))}>{t("البداية", "Head")}</button>
-              <button className={actionBtn} disabled={busy} onClick={() => run((n) => deleteTail(n))}>{t("النهاية", "Tail")}</button>
+              <button className={actionBtn} disabled={busy} onClick={() => run((n) => deleteHead(t, n))}>{t("البداية", "Head")}</button>
+              <button className={actionBtn} disabled={busy} onClick={() => run((n) => deleteTail(t, n))}>{t("النهاية", "Tail")}</button>
             </ButtonGroup>
             <ButtonGroup label={t("خوارزميات", "Algorithms")}>
-              <button className={actionBtn} disabled={busy} onClick={() => run((n) => search(n, val()))}>{t("بحث", "Search")}</button>
-              <button className={actionBtn} disabled={busy} onClick={() => run((n) => reverse(n))}>{t("عكس القائمة", "Reverse")}</button>
+              <button className={actionBtn} disabled={busy} onClick={() => run((n) => search(t, n, val()))}>{t("بحث", "Search")}</button>
+              <button className={actionBtn} disabled={busy} onClick={() => run((n) => reverse(t, n))}>{t("عكس القائمة", "Reverse")}</button>
             </ButtonGroup>
             <ButtonGroup label={t("القائمة", "List")}>
               <button className={actionBtn} disabled={busy} onClick={randomize}>{t("عشوائي", "Random")}</button>

@@ -148,17 +148,17 @@ export function BSTVisualizer() {
               <span className="text-xs font-semibold text-slate-400">{t("القيمة", "Value")}</span>
               <input type="number" value={value} onChange={(e) => setValue(e.target.value)} className="w-28 rounded-lg border border-border bg-bg-soft px-3 py-2 font-mono text-sm text-white outline-none focus:border-brand-500" />
             </label>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(bstInsert(root, val()))}>{t("إدراج", "Insert")}</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(bstSearch(root, val()))}>{t("بحث", "Search")}</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(bstDelete(root, val()))}>{t("حذف", "Delete")}</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(bstInsert(t, root, val()))}>{t("إدراج", "Insert")}</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(bstSearch(t, root, val()))}>{t("بحث", "Search")}</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(bstDelete(t, root, val()))}>{t("حذف", "Delete")}</button>
           </div>
 
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <span className="w-16 shrink-0 text-xs font-bold text-slate-500">{t("تنقّلات", "Traversals")}</span>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(root, "inorder"))}>Inorder</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(root, "preorder"))}>Preorder</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(root, "postorder"))}>Postorder</button>
-            <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(root, "levelorder"))}>Level-order</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(t, root, "inorder"))}>Inorder</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(t, root, "preorder"))}>Preorder</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(t, root, "postorder"))}>Postorder</button>
+            <button className={actionBtn} disabled={busy} onClick={() => apply(bstTraverse(t, root, "levelorder"))}>Level-order</button>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

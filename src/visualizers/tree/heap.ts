@@ -1,4 +1,5 @@
 import { buildRun, node, type ArrayCell, type RawFrame, type TNode, type TreeRun } from "./engine";
+import type { TFunction } from "../../i18n";
 
 export type HeapItem = { id: string; value: number };
 
@@ -63,70 +64,70 @@ class HRec {
   }
 }
 
-function siftDown(r: HRec, i: number, size: number, cmpLine: number, actLine: number) {
+function siftDown(t: TFunction, r: HRec, i: number, size: number, cmpLine: number, actLine: number) {
   while (true) {
     let largest = i;
     const l = 2 * i + 1;
     const rr = 2 * i + 2;
     if (l < size) {
-      r.snap({ size, activeIdx: [i, l], codeLine: cmpLine, message: `نقارن الأب ${r.items[i].value} بابنه الأيسر ${r.items[l].value}.` });
+      r.snap({ size, activeIdx: [i, l], codeLine: cmpLine, message: t(`نقارن الأب ${r.items[i].value} بابنه الأيسر ${r.items[l].value}.`, `Compare parent ${r.items[i].value} with its left child ${r.items[l].value}.`) });
       if (r.items[l].value > r.items[largest].value) largest = l;
     }
     if (rr < size) {
-      r.snap({ size, activeIdx: [largest, rr], codeLine: cmpLine, message: `نقارن ${r.items[largest].value} بالابن الأيمن ${r.items[rr].value}.` });
+      r.snap({ size, activeIdx: [largest, rr], codeLine: cmpLine, message: t(`نقارن ${r.items[largest].value} بالابن الأيمن ${r.items[rr].value}.`, `Compare ${r.items[largest].value} with the right child ${r.items[rr].value}.`) });
       if (r.items[rr].value > r.items[largest].value) largest = rr;
     }
     if (largest === i) {
-      r.snap({ size, activeIdx: [i], codeLine: actLine, message: `الأب ${r.items[i].value} أكبر من ابنيه ← خاصية الكومة محقّقة هنا.` });
+      r.snap({ size, activeIdx: [i], codeLine: actLine, message: t(`الأب ${r.items[i].value} أكبر من ابنيه ← خاصية الكومة محقّقة هنا.`, `Parent ${r.items[i].value} is larger than both children ← the heap property holds here.`) });
       return;
     }
-    r.snap({ size, swapIdx: [i, largest], codeLine: actLine, message: `الابن ${r.items[largest].value} أكبر ← نبدّله مع الأب ${r.items[i].value}.` });
+    r.snap({ size, swapIdx: [i, largest], codeLine: actLine, message: t(`الابن ${r.items[largest].value} أكبر ← نبدّله مع الأب ${r.items[i].value}.`, `Child ${r.items[largest].value} is larger ← swap it with the parent ${r.items[i].value}.`) });
     r.swap(i, largest);
-    r.snap({ size, swapIdx: [i, largest], codeLine: actLine, message: "تمّ التبديل، نتابع النزول (sift down)." });
+    r.snap({ size, swapIdx: [i, largest], codeLine: actLine, message: t("تمّ التبديل، نتابع النزول (sift down).", "Swapped, continue sifting down.") });
     i = largest;
   }
 }
 
-export function heapify(items: HeapItem[]): { run: TreeRun; root: null } {
+export function heapify(t: TFunction, items: HeapItem[]): { run: TreeRun; root: null } {
   const code = [
     "buildMaxHeap(a):",
     "  for i = n/2 - 1 downto 0:",
-    "    siftDown(i)        // قارن بالأبناء",
+    "    siftDown(i)        // compare with children",
     "    swap if a child is larger",
   ];
   const r = new HRec(items);
   const n = r.items.length;
-  r.snap({ size: n, codeLine: 0, message: "بناء كومة قصوى (Max-Heap): نبدأ من آخر عقدة أب." });
+  r.snap({ size: n, codeLine: 0, message: t("بناء كومة قصوى (Max-Heap): نبدأ من آخر عقدة أب.", "Build a Max-Heap: start from the last parent node.") });
   for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-    r.snap({ size: n, activeIdx: [i], codeLine: 1, message: `نطبّق siftDown على العقدة عند الفهرس ${i} (القيمة ${r.items[i].value}).` });
-    siftDown(r, i, n, 2, 3);
+    r.snap({ size: n, activeIdx: [i], codeLine: 1, message: t(`نطبّق siftDown على العقدة عند الفهرس ${i} (القيمة ${r.items[i].value}).`, `Apply siftDown to the node at index ${i} (value ${r.items[i].value}).`) });
+    siftDown(t, r, i, n, 2, 3);
   }
-  r.snap({ size: n, sortedIds: [], codeLine: 0, message: "اكتمل بناء الكومة القصوى: كل أب ≥ أبنائه، والجذر هو الأكبر." });
-  return { run: buildRun({ name: "بناء الكومة (Heapify)", time: "O(n)", space: "O(1)", code }, r.frames), root: null };
+  r.snap({ size: n, sortedIds: [], codeLine: 0, message: t("اكتمل بناء الكومة القصوى: كل أب ≥ أبنائه، والجذر هو الأكبر.", "Max-Heap built: every parent ≥ its children, and the root is the largest.") });
+  return { run: buildRun({ name: t("بناء الكومة (Heapify)", "Build Heap (Heapify)"), time: "O(n)", space: "O(1)", code }, r.frames), root: null };
 }
 
-export function heapSort(items: HeapItem[]): { run: TreeRun; root: null } {
+export function heapSort(t: TFunction, items: HeapItem[]): { run: TreeRun; root: null } {
   const code = [
     "buildMaxHeap(a)",
     "for end = n-1 downto 1:",
-    "  swap(a[0], a[end])   // أكبر عنصر لنهايته",
+    "  swap(a[0], a[end])   // largest element to its end",
     "  heapSize--",
-    "  siftDown(0)          // أصلح الجذر",
+    "  siftDown(0)          // fix the root",
   ];
   const r = new HRec(items);
   const n = r.items.length;
-  r.snap({ size: n, codeLine: 0, message: "الترتيب بالكومة: أولاً نبني كومة قصوى." });
+  r.snap({ size: n, codeLine: 0, message: t("الترتيب بالكومة: أولاً نبني كومة قصوى.", "Heap sort: first build a max-heap.") });
   for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-    siftDown(r, i, n, 4, 4);
+    siftDown(t, r, i, n, 4, 4);
   }
-  r.snap({ size: n, codeLine: 0, message: "اكتملت الكومة القصوى. الآن نستخرج الجذر (الأكبر) تكراراً." });
+  r.snap({ size: n, codeLine: 0, message: t("اكتملت الكومة القصوى. الآن نستخرج الجذر (الأكبر) تكراراً.", "Max-heap is ready. Now extract the root (the largest) repeatedly.") });
 
   for (let end = n - 1; end > 0; end--) {
-    r.snap({ size: end + 1, swapIdx: [0, end], codeLine: 2, message: `الجذر ${r.items[0].value} هو الأكبر ← نبدّله مع آخر عنصر في الكومة.` });
+    r.snap({ size: end + 1, swapIdx: [0, end], codeLine: 2, message: t(`الجذر ${r.items[0].value} هو الأكبر ← نبدّله مع آخر عنصر في الكومة.`, `The root ${r.items[0].value} is the largest ← swap it with the last element in the heap.`) });
     r.swap(0, end);
-    r.snap({ size: end, codeLine: 3, message: `العنصر ${r.items[end].value} استقر في موضعه النهائي. نُقلّص حجم الكومة.` });
-    siftDown(r, 0, end, 4, 4);
+    r.snap({ size: end, codeLine: 3, message: t(`العنصر ${r.items[end].value} استقر في موضعه النهائي. نُقلّص حجم الكومة.`, `Element ${r.items[end].value} settled into its final position. Shrink the heap size.`) });
+    siftDown(t, r, 0, end, 4, 4);
   }
-  r.snap({ size: 0, codeLine: 1, message: "اكتمل الترتيب! المصفوفة مرتّبة تصاعدياً." });
-  return { run: buildRun({ name: "الترتيب بالكومة (Heap Sort)", time: "O(n log n)", space: "O(1)", code }, r.frames), root: null };
+  r.snap({ size: 0, codeLine: 1, message: t("اكتمل الترتيب! المصفوفة مرتّبة تصاعدياً.", "Sorting complete! The array is sorted in ascending order.") });
+  return { run: buildRun({ name: t("الترتيب بالكومة (Heap Sort)", "Heap Sort"), time: "O(n log n)", space: "O(1)", code }, r.frames), root: null };
 }

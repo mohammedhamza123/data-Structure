@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { PlaybackBar, PseudocodePanel, usePlayer } from "../../components/Player";
 import { ComplexityBadge } from "../../components/ComplexityBadge";
 import { dequeue, emptyQueue, enqueue, type QueueFrame, type QueueRun, type QueueState } from "./queue";
-import { useLang } from "../../i18n";
+import { useLang, type TFunction } from "../../i18n";
 
 const CAP = 6;
 
@@ -34,9 +34,9 @@ export function QueueVisualizer() {
   const [mode, setMode] = useState<"linear" | "circular">("circular");
   const [state, setState] = useState<QueueState>(() => {
     const s = emptyQueue(CAP, true);
-    return applyValues(s, [10, 20, 30]);
+    return applyValues(t, s, [10, 20, 30]);
   });
-  const [run, setRun] = useState<QueueRun>(() => idleRun(applyValues(emptyQueue(CAP, true), [10, 20, 30]), t("الطابور يعمل بمبدأ FIFO: أول من يدخل أول من يخرج. جرّب الإضافة والإخراج.", "A queue works on the FIFO principle: first in, first out. Try enqueue and dequeue.")));
+  const [run, setRun] = useState<QueueRun>(() => idleRun(applyValues(t, emptyQueue(CAP, true), [10, 20, 30]), t("الطابور يعمل بمبدأ FIFO: أول من يدخل أول من يخرج. جرّب الإضافة والإخراج.", "A queue works on the FIFO principle: first in, first out. Try enqueue and dequeue.")));
   const [value, setValue] = useState("40");
 
   const player = usePlayer(run.frames.length);
@@ -49,7 +49,7 @@ export function QueueVisualizer() {
   }, [run, setIdx, setPlaying]);
 
   const switchMode = (m: "linear" | "circular") => {
-    const s = applyValues(emptyQueue(CAP, m === "circular"), [10, 20, 30]);
+    const s = applyValues(t, emptyQueue(CAP, m === "circular"), [10, 20, 30]);
     setMode(m);
     setState(s);
     setRun(idleRun(s, m === "circular" ? t("الطابور الدائري يعيد استخدام المساحة عبر الالتفاف (rear = (rear+1) % capacity).", "The circular queue reuses space by wrapping around (rear = (rear+1) % capacity).") : t("الطابور الخطي: front و rear يتقدّمان للأمام فقط، وقد تُهدر مساحة بعد front.", "The linear queue: front and rear only move forward, and space after front may be wasted.")));
@@ -59,9 +59,9 @@ export function QueueVisualizer() {
     const v = parseInt(value, 10);
     return Number.isNaN(v) ? Math.floor(Math.random() * 90) + 10 : v;
   };
-  const doEnq = () => { const r = enqueue(state, val()); setState(r.state); setRun(r); };
-  const doDeq = () => { const r = dequeue(state); setState(r.state); setRun(r); };
-  const reset = () => { const s = applyValues(emptyQueue(CAP, mode === "circular"), [10, 20, 30]); setState(s); setRun(idleRun(s, t("أُعيد الطابور.", "The queue was reset."))); };
+  const doEnq = () => { const r = enqueue(t, state, val()); setState(r.state); setRun(r); };
+  const doDeq = () => { const r = dequeue(t, state); setState(r.state); setRun(r); };
+  const reset = () => { const s = applyValues(t, emptyQueue(CAP, mode === "circular"), [10, 20, 30]); setState(s); setRun(idleRun(s, t("أُعيد الطابور.", "The queue was reset."))); };
   const clear = () => { const s = emptyQueue(CAP, mode === "circular"); setState(s); setRun(idleRun(s, t("الطابور فارغ.", "The queue is empty."))); };
 
   const busy = playing;
@@ -207,8 +207,8 @@ function CircularLayout({ frame }: { frame: QueueFrame }) {
   );
 }
 
-function applyValues(s: QueueState, values: number[]): QueueState {
+function applyValues(t: TFunction, s: QueueState, values: number[]): QueueState {
   let cur = s;
-  for (const v of values) cur = enqueue(cur, v).state;
+  for (const v of values) cur = enqueue(t, cur, v).state;
   return cur;
 }

@@ -10,6 +10,9 @@ import {
 
 export type Lang = "ar" | "en";
 
+/** Translation function: returns the Arabic or English string based on current language. */
+export type TFunction = (ar: string, en: string) => string;
+
 type I18nValue = {
   lang: Lang;
   dir: "rtl" | "ltr";
