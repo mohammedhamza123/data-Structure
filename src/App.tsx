@@ -1,0 +1,28 @@
+import { Routes, Route } from "react-router-dom";
+import { Layout } from "./components/Layout";
+import { HomePage } from "./pages/HomePage";
+import { LinkedListPage } from "./pages/LinkedListPage";
+import { StackPage } from "./pages/StackPage";
+import { QueuePage } from "./pages/QueuePage";
+import { SortingPage } from "./pages/SortingPage";
+import { TreesPage } from "./pages/TreesPage";
+import { RecursionPage } from "./pages/RecursionPage";
+import { ComplexityPage } from "./pages/ComplexityPage";
+
+export default function App() {
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/linked-list" element={<LinkedListPage />} />
+        <Route path="/stack" element={<StackPage />} />
+        <Route path="/queue" element={<QueuePage />} />
+        <Route path="/complexity" element={<ComplexityPage />} />
+        <Route path="/sorting" element={<SortingPage />} />
+        <Route path="/recursion" element={<RecursionPage />} />
+        <Route path="/trees" element={<TreesPage />} />
+        <Route path="*" element={<HomePage />} />
+      </Route>
+    </Routes>
+  );
+}
