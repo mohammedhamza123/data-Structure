@@ -7,6 +7,7 @@ import { QueuePage } from "./pages/QueuePage";
 import { SortingPage } from "./pages/SortingPage";
 import { TreesPage } from "./pages/TreesPage";
 import { RecursionPage } from "./pages/RecursionPage";
+import { BinarySearchPage } from "./pages/BinarySearchPage";
 import { ComplexityPage } from "./pages/ComplexityPage";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/queue" element={<QueuePage />} />
         <Route path="/complexity" element={<ComplexityPage />} />
         <Route path="/sorting" element={<SortingPage />} />
+        <Route path="/binary-search" element={<BinarySearchPage />} />
         <Route path="/recursion" element={<RecursionPage />} />
         <Route path="/trees" element={<TreesPage />} />
         <Route path="*" element={<HomePage />} />
