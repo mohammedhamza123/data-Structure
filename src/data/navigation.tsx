@@ -42,6 +42,21 @@ export function useNavSections(): NavSection[] {
     title: t("هياكل البيانات", "Data Structures"),
     items: [
       {
+        path: "/matrices",
+        label: t("المصفوفات", "Arrays & Matrices"),
+        description: t("1D و 2D · عكس، جمع صفوف، قطر", "1D & 2D · reverse, row sums, diagonal"),
+        available: true,
+        badge: t("تفاعلي", "Interactive"),
+        icon: (
+          <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+        ),
+      },
+      {
         path: "/linked-list",
         label: t("القوائم المرتبطة", "Linked Lists"),
         description: t("إضافة، حذف، بحث, وعكس", "Insert, delete, search, reverse"),

@@ -9,6 +9,7 @@ import { TreesPage } from "./pages/TreesPage";
 import { RecursionPage } from "./pages/RecursionPage";
 import { BinarySearchPage } from "./pages/BinarySearchPage";
 import { ComplexityPage } from "./pages/ComplexityPage";
+import { MatrixPage } from "./pages/MatrixPage";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/linked-list" element={<LinkedListPage />} />
+        <Route path="/matrices" element={<MatrixPage />} />
         <Route path="/stack" element={<StackPage />} />
         <Route path="/queue" element={<QueuePage />} />
         <Route path="/complexity" element={<ComplexityPage />} />
