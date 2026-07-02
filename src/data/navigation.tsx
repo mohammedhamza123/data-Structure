@@ -165,6 +165,50 @@ export function useNavSections(): NavSection[] {
     ],
   },
   {
+    title: t("أساسيات C++", "C++ Basics"),
+    items: [
+      {
+        path: "/cpp/pointers",
+        label: t("المؤشرات", "Pointers"),
+        description: t("& و * و nullptr · تمرير بالمؤشر", "& and * and nullptr · pass by pointer"),
+        available: true,
+        badge: "C++",
+        icon: (
+          <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        ),
+      },
+      {
+        path: "/cpp/struct",
+        label: t("struct", "struct"),
+        description: t("تجميع البيانات · . و ->", "Group data · . and ->"),
+        available: true,
+        badge: "C++",
+        icon: (
+          <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M3 9h18M9 3v18" />
+          </svg>
+        ),
+      },
+      {
+        path: "/cpp/functions",
+        label: t("الدوال", "Functions"),
+        description: t("تعريف · تمرير · void · scope", "Define · pass · void · scope"),
+        available: true,
+        badge: "C++",
+        icon: (
+          <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 7h6l2 3h8" />
+            <path d="M4 17h6l2-3h8" />
+          </svg>
+        ),
+      },
+    ],
+  },
+  {
     title: t("التحليل", "Analysis"),
     items: [
       {

@@ -10,6 +10,9 @@ import { RecursionPage } from "./pages/RecursionPage";
 import { BinarySearchPage } from "./pages/BinarySearchPage";
 import { ComplexityPage } from "./pages/ComplexityPage";
 import { MatrixPage } from "./pages/MatrixPage";
+import { CppPointersPage } from "./pages/CppPointersPage";
+import { CppStructPage } from "./pages/CppStructPage";
+import { CppFunctionsPage } from "./pages/CppFunctionsPage";
 
 export default function App() {
   return (
@@ -25,6 +28,9 @@ export default function App() {
         <Route path="/binary-search" element={<BinarySearchPage />} />
         <Route path="/recursion" element={<RecursionPage />} />
         <Route path="/trees" element={<TreesPage />} />
+        <Route path="/cpp/pointers" element={<CppPointersPage />} />
+        <Route path="/cpp/struct" element={<CppStructPage />} />
+        <Route path="/cpp/functions" element={<CppFunctionsPage />} />
         <Route path="*" element={<HomePage />} />
       </Route>
     </Routes>
